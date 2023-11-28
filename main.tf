@@ -72,7 +72,7 @@ module "lb_security_group" {
   #Added 11/28/2023
   name = "load-balancer-sg-${each.key}-${each.value.environment}"
   #Commented out 11/28/2023
-  name = "load-balancer-sg-${var.project_name}-${var.environment}"
+  #name = "load-balancer-sg-${var.project_name}-${var.environment}"
 
   description = "Security group for load balancer with HTTP ports open within VPC"
   #Added 11/28/2023
