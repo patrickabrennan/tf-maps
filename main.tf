@@ -15,11 +15,20 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.14.2"
 
+  for_each = var.project
+
   cidr = var.vpc_cidr_block
 
   azs             = data.aws_availability_zones.available.names
-  private_subnets = slice(var.private_subnet_cidr_blocks, 0, var.private_subnets_per_vpc)
-  public_subnets  = slice(var.public_subnet_cidr_blocks, 0, var.public_subnets_per_vpc)
+
+  #Added 11/28/2023 to support for_each
+  private_subnets = slice(var.private_subnet_cidr_blocks, 0, each.value.private_subnets_per_vpc)
+  public_subnets  = slice(var.public_subnet_cidr_blocks, 0, each.value.public_subnets_per_vpc)
+
+  #Commented out 11/28/2023
+  #private_subnets = slice(var.private_subnet_cidr_blocks, 0, var.private_subnets_per_vpc)
+  #public_subnets  = slice(var.public_subnet_cidr_blocks, 0, var.public_subnets_per_vpc)
+
 
   enable_nat_gateway = true
   enable_vpn_gateway = false
@@ -31,21 +40,45 @@ module "app_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
   version = "4.9.0"
 
-  name        = "web-server-sg-${var.project_name}-${var.environment}"
-  description = "Security group for web-servers with HTTP ports open within VPC"
-  vpc_id      = module.vpc.vpc_id
+  #Added 11/28/2023 
+  for_each = var.project
 
-  ingress_cidr_blocks = module.vpc.public_subnets_cidr_blocks
+  #Added 11/28/2023
+  name        = "web-server-sg-${each.key}-${each.value.environment}"
+
+  #commented out
+  #name        = "web-server-sg-${var.project_name}-${var.environment}"
+  description = "Security group for web-servers with HTTP ports open within VPC"
+
+  #Added 11/28/
+  vpc_id      = module.vpc[each.key].vpc_id
+  #commented out 11/28/2023
+  #vpc_id      = module.vpc.vpc_id
+
+  #Added 11/28/2023
+  ingress_cidr_blocks = module.vpc[each.key].public_subnets_cidr_blocks
+  #Commented out 11/28/2023 
+  #ingress_cidr_blocks = module.vpc.public_subnets_cidr_blocks
 }
 
 module "lb_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
   version = "4.9.0"
 
+  #Added 11/28/2023
+  for_each = var.project
+
+
+  #Added 11/28/2023
+  name = "load-balancer-sg-${each.key}-${each.value.environment}"
+  #Commented out 11/28/2023
   name = "load-balancer-sg-${var.project_name}-${var.environment}"
 
   description = "Security group for load balancer with HTTP ports open within VPC"
-  vpc_id      = module.vpc.vpc_id
+  #Added 11/28/2023
+  vpc_id      = module.vpc[each.key].vpc_id
+  #Commented out 11/28/2023
+  #vpc_id      = module.vpc.vpc_id
 
   ingress_cidr_blocks = ["0.0.0.0/0"]
 }
@@ -59,9 +92,17 @@ module "elb_http" {
   source  = "terraform-aws-modules/elb/aws"
   version = "3.0.1"
 
+  #Added 11/28/2023
+  for_each = var.project
+
   # Comply with ELB name restrictions
   # https://docs.aws.amazon.com/elasticloadbalancing/2012-06-01/APIReference/API_CreateLoadBalancer.html
-  name     = trimsuffix(substr(replace(join("-", ["lb", random_string.lb_id.result, var.project_name, var.environment]), "/[^a-zA-Z0-9-]/", ""), 0, 32), "-")
+
+
+  #Added 11/28/2023
+  name     = trimsuffix(substr(replace(join("-", ["lb", random_string.lb_id.result, each.key, each.value.environment]), "/[^a-zA-Z0-9-]/", ""), 0, 32), "-")
+  #Commented out 11/28/2023
+  #name     = trimsuffix(substr(replace(join("-", ["lb", random_string.lb_id.result, var.project_name, var.environment]), "/[^a-zA-Z0-9-]/", ""), 0, 32), "-")
   internal = false
 
   security_groups = [module.lb_security_group.security_group_id]
