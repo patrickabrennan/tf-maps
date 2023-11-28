@@ -109,8 +109,8 @@ module "elb_http" {
   subnets         = module.vpc.public_subnets
 
   #Added 11/28/2023
-  number_of_instances = length(modules.aws-instance[each.key].instance_ids)
-  instances           = modules.aws-instance[each.key].instance_ids
+  number_of_instances = length(module.ec2_instances[each.key].instance_ids)
+  instances           = module.ec2_instances[each.key].instance_ids
 
   #Commented out 11/28/2023
   #number_of_instances = length(aws_instance.app)
@@ -131,6 +131,24 @@ module "elb_http" {
     timeout             = 5
   }
 }
+
+#Add local module 11/28/2023
+module "ec2_instances" {
+  source     = "./modules/aws-instance"
+  depends_on = [module.vpc]
+
+  for_each = var.project
+
+  instance_count     = each.value.instances_per_subnet * length(module.vpc[each.key].private_subnets)
+  instance_type      = each.value.instance_type
+  subnet_ids         = module.vpc[each.key].private_subnets[*]
+  security_group_ids = [module.app_security_group[each.key].security_group_id]
+
+  project_name = each.key
+  environment  = each.value.environment
+}
+
+
 
 #Comment out data "aws_ami" "amazon_linux" 11/28/2023 as will be using a module
 #data "aws_ami" "amazon_linux" {
