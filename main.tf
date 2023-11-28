@@ -111,7 +111,7 @@ module "elb_http" {
   #Added 11/28/2023
   number_of_instances = length(module.ec2_instances[each.key].instance_ids)
   instances           = module.ec2_instances[each.key].instance_ids
-
+ 
   #Commented out 11/28/2023
   #number_of_instances = length(aws_instance.app)
   #instances           = aws_instance.app.*.id
