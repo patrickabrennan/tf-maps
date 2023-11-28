@@ -127,37 +127,39 @@ module "elb_http" {
   }
 }
 
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
+#Comment out data "aws_ami" "amazon_linux" 11/28/2023 as will be using a module
+#data "aws_ami" "amazon_linux" {
+#  most_recent = true
+#  owners      = ["amazon"]
 
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
-  }
-}
+#  filter {
+#    name   = "name"
+#    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+#  }
+#}
 
-resource "aws_instance" "app" {
-  count = 2
+#Comment out resource "aws_instance" "app" as will be using a module
+#resource "aws_instance" "app" {
+#  count = 2
 
-  ami           = data.aws_ami.amazon_linux.id
-  instance_type = var.instance_type
+#  ami           = data.aws_ami.amazon_linux.id
+#  instance_type = var.instance_type
 
-  subnet_id              = module.vpc.private_subnets[0]
-  vpc_security_group_ids = [module.app_security_group.security_group_id]
+#  subnet_id              = module.vpc.private_subnets[0]
+#  vpc_security_group_ids = [module.app_security_group.security_group_id]
 
-  user_data = <<-EOF
-    #!/bin/bash
-    sudo yum update -y
-    sudo yum install httpd -y
-    sudo systemctl enable httpd
-    sudo systemctl start httpd
-    echo "<html><body><div>Hello, world!</div></body></html>" > /var/www/html/index.html
-    EOF
+#  user_data = <<-EOF
+#    #!/bin/bash
+#    sudo yum update -y
+#    sudo yum install httpd -y
+#    sudo systemctl enable httpd
+#    sudo systemctl start httpd
+#    echo "<html><body><div>Hello, world!</div></body></html>" > /var/www/html/index.html
+#    EOF
 
-  tags = {
-    Terraform   = "true"
-    Project     = var.project_name
-    Environment = var.environment
-  }
-}
+#  tags = {
+#    Terraform   = "true"
+#    Project     = var.project_name
+#    Environment = var.environment
+#  }
+#}
