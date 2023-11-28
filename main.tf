@@ -50,6 +50,7 @@ module "app_security_group" {
   #name        = "web-server-sg-${var.project_name}-${var.environment}"
   description = "Security group for web-servers with HTTP ports open within VPC"
 
+
   #Added 11/28/
   vpc_id      = module.vpc[each.key].vpc_id
   #commented out 11/28/2023
