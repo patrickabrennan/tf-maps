@@ -105,6 +105,11 @@ module "elb_http" {
   #name     = trimsuffix(substr(replace(join("-", ["lb", random_string.lb_id.result, var.project_name, var.environment]), "/[^a-zA-Z0-9-]/", ""), 0, 32), "-")
   internal = false
 
+  #Added 11-28-2023
+  security_groups = [module.lb_security_group[each.key].security_group_id]
+  subnets         = module.vpc[each.key].public_subnets
+
+  #Commented out 11-28-2023
   security_groups = [module.lb_security_group.security_group_id]
   subnets         = module.vpc.public_subnets
 
