@@ -109,8 +109,8 @@ module "elb_http" {
   subnets         = module.vpc.public_subnets
 
   #Added 11/28/2023
-  number_of_instances = length(module.aws-instance[each.key].instance_ids)
-  instances           = module.aws-instance[each.key].instance_ids
+  number_of_instances = length(modules.aws-instance[each.key].instance_ids)
+  instances           = modules.aws-instance[each.key].instance_ids
 
   #Commented out 11/28/2023
   #number_of_instances = length(aws_instance.app)
