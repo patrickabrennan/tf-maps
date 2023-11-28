@@ -36,7 +36,7 @@ variable "aws_region" {
 #}
 #END OF REMOVAL ORIGINAL STUFF 11/28/2023
 
-BEGIN OF NEW STUFF 11/28/2023
+#BEGIN OF NEW STUFF 11/28/2023
 variable "project" {
   description = "Map of project names to configuration."
   type        = map(any)
