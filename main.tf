@@ -124,13 +124,24 @@ module "elb_http" {
 
   listener = [{
     instance_port     = "80"
+    #Added port 443
+    instance_port     = "443"
     instance_protocol = "HTTP"
+    #Added HTTPS
+    instance_protocol = "HTTPS"
     lb_port           = "80"
+    #Added port 443
+    lb_port           = "443"
     lb_protocol       = "HTTP"
+    #Added HTTPS
+    lb_protocol       = "HTTPS"
   }]
 
   health_check = {
+    #Commented out port 80
     target              = "HTTP:80/index.html"
+    #Added port 443
+    target              = "HTTP:443/index.html"
     interval            = 10
     healthy_threshold   = 3
     unhealthy_threshold = 10
