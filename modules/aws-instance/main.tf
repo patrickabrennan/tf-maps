@@ -17,6 +17,9 @@ resource "aws_instance" "app" {
   subnet_id              = var.subnet_ids[count.index % length(var.subnet_ids)]
   vpc_security_group_ids = var.security_group_ids
 
+  #added public IP
+  associate_public_ip_address = true
+
   user_data = <<-EOF
     #!/bin/bash
     echo "Installing Pat's Google Maps Application"
