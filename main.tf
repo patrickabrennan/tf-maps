@@ -140,7 +140,7 @@ module "elb_http" {
 
   health_check = {
     #Commented out port 80
-    target              = "HTTP:80/index.html"
+    #target              = "HTTP:80/index.html"
     #Added port 443
     target              = "HTTP:443/usr/share/nginx/html/index.html"
     interval            = 10
