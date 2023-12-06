@@ -46,7 +46,7 @@ variable "project" {
       public_subnets_per_vpc  = 2,
       private_subnets_per_vpc = 2,
       instances_per_subnet    = 2,
-      instance_type           = "t3.small",
+      #instance_type           = "t3.small",
       environment             = "dev"
     },
     internal-webapp = {
