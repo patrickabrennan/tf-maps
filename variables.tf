@@ -29,11 +29,11 @@ variable "aws_region" {
 #  default     = 2
 #}
 
-#variable "instance_type" {
-#  description = "Type of EC2 instance to use."
-#  type        = string
+variable "instance_type" {
+  description = "Type of EC2 instance to use."
+  type        = string
 #  default     = "t2.micro"
-#}
+}
 #END OF REMOVAL ORIGINAL STUFF 11/28/2023
 
 #BEGIN OF NEW STUFF 11/28/2023
