@@ -17,8 +17,8 @@ resource "aws_instance" "app" {
   subnet_id              = var.subnet_ids[count.index % length(var.subnet_ids)]
   vpc_security_group_ids = var.security_group_ids
 
-  #added public IP 11/29/2023
-  #associate_public_ip_address = true
+  #added public IP 12/15/2023
+  associate_public_ip_address = true
 
   user_data = <<-EOF
     !/bin/bash
