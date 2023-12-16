@@ -37,8 +37,11 @@ module "vpc" {
 }
 
 module "app_security_group" {
-  source  = "terraform-aws-modules/security-group/aws//modules/web"
-  version = "4.9.0"
+  #source  = "terraform-aws-modules/security-group/aws//modules/web"
+  #version = "4.9.0"
+  #module "https_443_security_group" {
+  source  = "terraform-aws-modules/security-group/aws//modules/https-443"
+  version = "~> 5.0"
 
   #Added 11/28/2023 
   for_each = var.project
@@ -63,8 +66,12 @@ module "app_security_group" {
 }
 
 module "lb_security_group" {
-  source  = "terraform-aws-modules/security-group/aws//modules/web"
-  version = "4.9.0"
+  #comment out web module 12-16-2023
+  #source  = "terraform-aws-modules/security-group/aws//modules/web"
+  #version = "4.9.0"
+  source  = "terraform-aws-modules/security-group/aws//modules/https-443"
+  version = "~> 5.0"
+
 
   #Added 11/28/2023
   for_each = var.project
@@ -123,26 +130,26 @@ module "elb_http" {
   #instances           = aws_instance.app.*.id
 
   listener = [{
-    instance_port     = "80"
+    #instance_port     = "80"
     #Added port 443
-    #instance_port     = "443"
-    instance_protocol = "HTTP"
+    instance_port     = "443"
+    #instance_protocol = "HTTP"
     #Added HTTPS
-    #instance_protocol = "HTTPS"
-    lb_port           = "80"
+    instance_protocol = "HTTPS"
+    #lb_port           = "80"
     #Added port 443
-    #lb_port           = "443"
-    lb_protocol       = "HTTP"
+    lb_port           = "443"
+    #lb_protocol       = "HTTP"
     #Added HTTPS
-    #lb_protocol       = "HTTPS"
-    #ssl_certificate_id = "arn:aws:acm:us-east-2:285942769742:certificate/a36e2d23-a84d-4236-b013-d8765b8b536a"
+    lb_protocol       = "HTTPS"
+    ssl_certificate_id = "arn:aws:acm:us-east-2:285942769742:certificate/a36e2d23-a84d-4236-b013-d8765b8b536a"
   }]
 
   health_check = {
     #Commented out port 80
-    target              = "HTTP:80/index.html"
+    #target              = "HTTP:80/index.html"
     #Added port 443
-    #target              = "HTTP:443/usr/share/nginx/html/index.html"
+    target              = "HTTPS:443/usr/share/nginx/html/index.html"
     interval            = 10
     healthy_threshold   = 3
     unhealthy_threshold = 10
@@ -204,5 +211,3 @@ module "ec2_instances" {
 #    Environment = var.environment
 #  }
 #}
-
-
