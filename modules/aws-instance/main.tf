@@ -21,7 +21,7 @@ resource "aws_instance" "app" {
   associate_public_ip_address = true
 
   user_data = <<-EOF
-    !/bin/bash
+    #!/bin/bash
     #echo "Installing Pat's Google Maps Application"
     #sudo yum update -y
     #sudo yum install docker -y
