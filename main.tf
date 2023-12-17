@@ -40,8 +40,8 @@ module "app_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
   version = "4.9.0"
   #module "https_443_security_group" {
-  source  = "terraform-aws-modules/security-group/aws//modules/https-443"
-  version = "~> 5.0"
+  #source  = "terraform-aws-modules/security-group/aws//modules/https-443"
+  #version = "~> 5.0"
 
   #Added 11/28/2023 
   for_each = var.project
@@ -69,8 +69,8 @@ module "lb_security_group" {
   #comment out web module 12-16-2023
   source  = "terraform-aws-modules/security-group/aws//modules/web"
   version = "4.9.0"
-  source  = "terraform-aws-modules/security-group/aws//modules/https-443"
-  version = "~> 5.0"
+  #source  = "terraform-aws-modules/security-group/aws//modules/https-443"
+  #version = "~> 5.0"
 
 
   #Added 11/28/2023
