@@ -22,19 +22,19 @@ resource "aws_instance" "app" {
 
   user_data = <<-EOF
     !/bin/bash
-    echo "Installing Pat's Google Maps Application"
-    sudo yum update -y
-    sudo yum install docker -y
-    sudo systemctl start docker 
-    sudo systemctl enable docker
-    sudo chmod 666 /var/run/docker.sock
-    docker run --rm -d -p 80:80 -p 443:443 --name myweb patrickabrennan/myweb
-    echo "Completed Installing Pat's Google Maps Application"
+    #echo "Installing Pat's Google Maps Application"
     #sudo yum update -y
-    #udo yum install httpd -y
-    #sudo systemctl enable httpd
-    #sudo systemctl start httpd
-    #echo "<html><body><div>Hello, world!</div></body></html>" > /var/www/html/index.html
+    #sudo yum install docker -y
+    #sudo systemctl start docker 
+    #sudo systemctl enable docker
+    #sudo chmod 666 /var/run/docker.sock
+    #docker run --rm -d -p 80:80 -p 443:443 --name myweb patrickabrennan/myweb
+    #echo "Completed Installing Pat's Google Maps Application"
+    sudo yum update -y
+    sudo yum install httpd -y
+    sudo systemctl enable httpd
+    sudo systemctl start httpd
+    echo "<html><body><div>Hello, world!</div></body></html>" > /var/www/html/index.html
   EOF
 
   tags = {
