@@ -130,19 +130,19 @@ module "elb_http" {
   #instances           = aws_instance.app.*.id
 
   listener = [{
-    instance_port     = "80"
+    #instance_port     = "80"
     #Added port 443
-    #instance_port     = "443"
-    instance_protocol = "HTTP"
+    instance_port     = "443"
+    #instance_protocol = "HTTP"
     #Added HTTPS
-    #instance_protocol = "HTTPS"
-    lb_port           = "80"
+    instance_protocol = "HTTPS"
+    #lb_port           = "80"
     #Added port 443
-    #lb_port           = "443"
-    lb_protocol       = "HTTP"
+    lb_port           = "443"
+    #lb_protocol       = "HTTP"
     #Added HTTPS
-    #lb_protocol       = "HTTPS"
-    #ssl_certificate_id = "arn:aws:acm:us-east-2:285942769742:certificate/a36e2d23-a84d-4236-b013-d8765b8b536a"
+    lb_protocol       = "HTTPS"
+    ssl_certificate_id = "arn:aws:acm:us-east-2:285942769742:certificate/a36e2d23-a84d-4236-b013-d8765b8b536a"
   }]
 
   health_check = {
