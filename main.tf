@@ -37,8 +37,8 @@ module "vpc" {
 }
 
 module "app_security_group" {
-  #source  = "terraform-aws-modules/security-group/aws//modules/web"
-  #version = "4.9.0"
+  source  = "terraform-aws-modules/security-group/aws//modules/web"
+  version = "4.9.0"
   #module "https_443_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/https-443"
   version = "~> 5.0"
@@ -67,8 +67,8 @@ module "app_security_group" {
 
 module "lb_security_group" {
   #comment out web module 12-16-2023
-  #source  = "terraform-aws-modules/security-group/aws//modules/web"
-  #version = "4.9.0"
+  source  = "terraform-aws-modules/security-group/aws//modules/web"
+  version = "4.9.0"
   source  = "terraform-aws-modules/security-group/aws//modules/https-443"
   version = "~> 5.0"
 
@@ -130,16 +130,16 @@ module "elb_http" {
   #instances           = aws_instance.app.*.id
 
   listener = [{
-    #instance_port     = "80"
+    instance_port     = "80"
     #Added port 443
     instance_port     = "443"
-    #instance_protocol = "HTTP"
+    instance_protocol = "HTTP"
     #Added HTTPS
     instance_protocol = "HTTPS"
-    #lb_port           = "80"
+    lb_port           = "80"
     #Added port 443
     lb_port           = "443"
-    #lb_protocol       = "HTTP"
+    lb_protocol       = "HTTP"
     #Added HTTPS
     lb_protocol       = "HTTPS"
     ssl_certificate_id = "arn:aws:acm:us-east-2:285942769742:certificate/a36e2d23-a84d-4236-b013-d8765b8b536a"
