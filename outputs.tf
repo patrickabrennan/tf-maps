@@ -16,13 +16,13 @@
 #Added below 11/28/2023
 output "public_dns_names" {
   description = "Public DNS names of the load balancers for each project."
-  value       = { for p in sort(keys(var.project)) : p => module.elb_http[p].elb_dns_name }
+  #value       = { for p in sort(keys(var.project)) : p => module.elb_http[p].elb_dns_name }
+  value       = { for p in sort(keys(var.project)) : p => module.elb_http[0].elb_dns_name }
 }
 
 output "vpc_arns" {
   description = "ARNs of the vpcs for each project."
-  #value       = { for p in sort(keys(var.project)) : p => module.vpc[p].vpc_arn }
-  value       = { for p in sort(keys(var.project)) : p => module.vpc[0].vpc_arn }
+  value       = { for p in sort(keys(var.project)) : p => module.vpc[p].vpc_arn }
 }
 
 output "instance_ids" {
