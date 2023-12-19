@@ -21,7 +21,8 @@ output "public_dns_names" {
 
 output "vpc_arns" {
   description = "ARNs of the vpcs for each project."
-  value       = { for p in sort(keys(var.project)) : p => module.vpc[p].vpc_arn }
+  #value       = { for p in sort(keys(var.project)) : p => module.vpc[p].vpc_arn }
+  value       = { for p in sort(keys(var.project)) : p => module.vpc[0].vpc_arn }
 }
 
 output "instance_ids" {
