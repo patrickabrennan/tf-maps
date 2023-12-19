@@ -162,7 +162,7 @@ resource "aws_route53_record" "tf-demo" {
   zone_id = "Z08017432VFWFXO6IWHIK"
   #name    = var.aws_dns_name
   name = "maps.demo.pabrennan.com"
-type    = "A"
+  type    = "CNAME"
   ttl     = 300
   records = [module.elb_http["client-webapp"].elb_dns_name]
 }
