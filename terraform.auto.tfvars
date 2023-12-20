@@ -1,3 +1,9 @@
 aws_region             = "us-east-1"
+#private_subnets_per_vpc = 1
+#public_subnets_per_vpc = 1
 #instance_type      = "t3.large"
+#instances_per_subnet = 2
+#instances_per_subnet = 2
 #environment            = "dev"
+#environment            = "test"
+vpc_cidr_block = "10.0.0.0/16"
