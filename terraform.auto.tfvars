@@ -1,3 +1,3 @@
-aws_region             = "us-east-2"
+aws_region             = "us-east-1"
 #instance_type      = "t3.large"
 #environment            = "dev"
