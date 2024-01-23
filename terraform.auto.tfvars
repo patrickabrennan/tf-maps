@@ -1,4 +1,4 @@
-aws_region             = "us-east-1"
+aws_region             = "us-east-2"
 #private_subnets_per_vpc = 1
 #public_subnets_per_vpc = 1
 #instance_type      = "t3.large"
