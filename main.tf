@@ -1,14 +1,36 @@
 #provider "aws" {
 #  region = var.aws_region
 #}
+required_providers {
+  aws = {
+    source  = "hashicorp/aws"
+    version = "~> 5.7.0"
+  }
+}
 
-provider "aws" {
+provider "aws" "configurations" {
   region = var.aws_region
-  assume_role_with_web_identity {
-    role_arn                = var.role_arn
-    web_identity_token_file = var.identity_token_file
-  }  
-}    
+
+  config {
+    region = each.value
+
+    assume_role_with_web_identity {
+      role_arn                = var.role_arn
+      web_identity_token_file = var.identity_token_file
+    }
+  }
+}
+
+
+#provider "aws" {
+#  region = var.aws_region
+#  assume_role_with_web_identity {
+#    role_arn                = var.role_arn
+#    web_identity_token_file = var.identity_token_file
+#  }  
+#}
+
+
 data "aws_availability_zones" "available" {
   state = "available"
 
