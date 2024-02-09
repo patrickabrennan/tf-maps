@@ -10,16 +10,6 @@ provider "aws" {
   }
 }
 
-
-provider "aws" {
-  region = var.aws_region
-  assume_role {
-    role_arn     = "arn:aws:iam::285942769742:role/tfc-workload-identity"
-    #session_name = "SESSION_NAME"
-    #external_id  = "EXTERNAL_ID"
-  }
-}
-
 data "aws_availability_zones" "available" {
   state = "available"
 
