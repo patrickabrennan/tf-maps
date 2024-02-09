@@ -2,7 +2,7 @@
 #  region = var.aws_region
 #}
 
-provider "aws" "configurations" {
+provider "aws" {
 
   config {
     region = var.aws_region
