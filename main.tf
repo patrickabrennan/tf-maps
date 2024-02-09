@@ -3,17 +3,12 @@
 #}
 
 provider "aws" {
-
-  config {
-    region = var.aws_region
-
-    assume_role_with_web_identity {
-      role_arn                = var.role_arn
-      web_identity_token_file = var.identity_token_file
-    }
-  }
-}
-    
+  region = var.aws_region
+  assume_role_with_web_identity {
+    role_arn                = var.role_arn
+    web_identity_token_file = var.identity_token_file
+  }  
+}    
 data "aws_availability_zones" "available" {
   state = "available"
 
