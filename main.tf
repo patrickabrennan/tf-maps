@@ -1,14 +1,15 @@
 #provider "aws" {
 #  region = var.aws_region
 #}
-#required_providers {
-provider aws = {
-    source  = "hashicorp/aws"
-    version = "~> 5.7.0"
-  }
 
-provider "aws" "configurations" {
+provider "aws" {
   region = var.aws_region
+  assume_role {
+    role_arn     = "arn:aws:iam::285942769742:role/tfc-workload-identity"
+    #session_name = "SESSION_NAME"
+    #external_id  = "EXTERNAL_ID"
+  }
+}
 
   config {
     region = each.value
