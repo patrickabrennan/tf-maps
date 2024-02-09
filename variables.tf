@@ -9,9 +9,9 @@ variable "identity_token_file" {
   type = string
 }
 
-#variable "role_arn" {
-#  type = string
-#}
+variable "role_arn" {
+  type = string
+}
 #end of OIDC part 
 #BEGIN OF REMOVAL OF ORIGINAL STUFF 11/28/2023
 #variable "project_name" {
