@@ -5,9 +5,9 @@ variable "aws_region" {
 }
 
 #added for OIDC 
-#variable "identity_token_file" {
-#  type = string
-#}
+variable "identity_token_file" {
+  type = string
+}
 
 #variable "role_arn" {
 #  type = string
