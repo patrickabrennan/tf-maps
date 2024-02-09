@@ -4,6 +4,15 @@ variable "aws_region" {
   default     = "us-east-2"
 }
 
+#added for OIDC 
+variable "identity_token_file" {
+  type = string
+}
+
+variable "role_arn" {
+  type = string
+}
+#end of OIDC part 
 #BEGIN OF REMOVAL OF ORIGINAL STUFF 11/28/2023
 #variable "project_name" {
 #  description = "Name of the project. Used in resource names and tags."
