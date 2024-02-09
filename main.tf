@@ -6,7 +6,7 @@ provider "aws" {
   assume_role_with_web_identity {
     role_arn                = "arn:aws:iam::285942769742:role/tfc-workload-identity"
     #session_name            = "terraform-stacks-private-preview"
-    web_identity_token_file = "/tmp/web_identity_token_file"
+    #web_identity_token_file = "/tmp/web_identity_token_file"
   }
 }
 
