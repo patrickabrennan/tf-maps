@@ -2,12 +2,10 @@
 #  region = var.aws_region
 #}
 #required_providers {
-provider {
-aws = {
+provider aws = {
     source  = "hashicorp/aws"
     version = "~> 5.7.0"
   }
-}
 
 provider "aws" "configurations" {
   region = var.aws_region
