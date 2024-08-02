@@ -6,6 +6,6 @@ aws_region             = "us-east-2"
 #instances_per_subnet = 2
 #environment            = "dev"
 #environment            = "test"
-vpc_cidr_block = "10.5.0.0/16"
+vpc_cidr_block = "10.0.0.0/16"
 #web_identity_token_file = "identity_token.aws.jwt_filename"
 #role_arn = "arn:aws:iam::285942769742:role/tfc-workload-identity"
