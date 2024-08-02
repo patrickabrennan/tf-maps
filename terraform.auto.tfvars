@@ -1,4 +1,4 @@
-aws_region             = "us-east-2"
+aws_region             = "us-east-1"
 #private_subnets_per_vpc = 1
 #public_subnets_per_vpc = 1
 #instance_type      = "t3.large"
@@ -7,5 +7,5 @@ aws_region             = "us-east-2"
 #environment            = "dev"
 #environment            = "test"
 vpc_cidr_block = "10.0.0.0/16"
-web_identity_token_file = "identity_token.aws.jwt_filename"
-role_arn = "arn:aws:iam::285942769742:role/tfc-workload-identity"
+#web_identity_token_file = "identity_token.aws.jwt_filename"
+#role_arn = "arn:aws:iam::285942769742:role/tfc-workload-identity"
