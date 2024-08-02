@@ -151,8 +151,7 @@ module "elb_http" {
     #lb_protocol       = "HTTP"
     #Added HTTPS
     lb_protocol       = "HTTPS"
-    ssl_certificate_id = "arn:aws:acm:us-east-1:285942769742:certificate/afaceb50-ab0b-47dc-b6f7-c8af89f6595b"
-    #ssl_certificate_id = "arn:aws:acm:us-east-1:285942769742:certificate/f4912f04-c5f1-4384-96bb-5dd14ba7dfa8"
+    ssl_certificate_id = "arn:aws:acm:us-east-2:285942769742:certificate/e9358ba3-27db-43aa-a334-1073336f91b4"
   }]
 
   health_check = {
