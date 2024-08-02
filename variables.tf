@@ -1,17 +1,17 @@
 variable "aws_region" {
   description = "AWS region for all resources."
   type        = string
-  default     = "us-east-2"
+  default     = "us-east-1"
 }
 
 #added for OIDC 
-variable "web_identity_token_file" {
-  type = string
-}
+#variable "web_identity_token_file" {
+#  type = string
+#}
 
-variable "role_arn" {
-  type = string
-}
+#variable "role_arn" {
+#  type = string
+#}
 
 #end of OIDC part 
 #BEGIN OF REMOVAL OF ORIGINAL STUFF 11/28/2023
