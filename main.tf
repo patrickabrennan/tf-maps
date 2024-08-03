@@ -139,12 +139,12 @@ module "elb_http" {
   #instances           = aws_instance.app.*.id
 
   listener = [{
-    #instance_port     = "80"
+    instance_port     = "80"
     #Added port 443
-    instance_port     = "443"
-    #instance_protocol = "HTTP"
+    #instance_port     = "443"
+    instance_protocol = "HTTP"
     #Added HTTPS
-    instance_protocol = "HTTPS"
+    #instance_protocol = "HTTPS"
     #lb_port           = "80"
     #Added port 443
     lb_port           = "443"
