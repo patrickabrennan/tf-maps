@@ -123,7 +123,8 @@ locals {
 module "elb_http" {
   source  = "terraform-aws-modules/alb/aws"
   #source  = "terraform-aws-modules/elb/aws"
-  version = "3.0.1"
+  #version = "3.0.1"
+  version = "9.17.0."
   #Chaged for each code 6-25-25
   for_each = { for p in local.flattened_projects : p.key => p }
   #for_each = var.project
