@@ -10,8 +10,8 @@ data "aws_ami" "amazon_linux" {
 
 #ADDED 6/26/25
 resource "aws_key_pair" "deployer" {
-  key_name   = "pat-key"
-  public_key = file("/Users/patrick.brennan/.ssh/id_rsa.pub")
+  key_name   = "deployer-key"
+  public_key = var.public_key
 }
 
 resource "aws_instance" "app" {
