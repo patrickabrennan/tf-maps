@@ -142,15 +142,32 @@ module "elb_http" {
 }
 
 #ADDED 6/26/25
-resource "aws_route53_record" "app_dns" {
-  
-  for_each = var.project
+resource "aws_route53_record" "maps" {
+  zone_id = "Z08017432VFWFXO6IWHIK"    #data.aws_route53_zone.primary.zone_id
+  name    = "maps.demo.pabrennan.com"
+  type    = "A"
 
-  zone_id = "Z08017432VFWFXO6IWHIK"  
-  name    = "maps-${each.key}.demo.pabrennan.com"
-  type    = "CNAME"
-  ttl     = 300
-  records = [module.elb_http[each.key].elb_dns_name]
+  alias {
+    name                   = aws_lb.maps.dns_name
+    zone_id                = "Z08017432VFWFXO6IWHIK"       #aws_lb.maps.zone_id
+    evaluate_target_health = true
+  }
+}
+
+
+
+
+
+
+#resource "aws_route53_record" "app_dns" {
+  
+#  for_each = var.project
+
+#  zone_id = "Z08017432VFWFXO6IWHIK"  
+#  name    = "maps-${each.key}.demo.pabrennan.com"
+#  type    = "CNAME"
+#  ttl     = 300
+#  records = [module.elb_http[each.key].elb_dns_name]
 }
 
 #NEW EC2 INSSTANCE MNODE 6/26/2025
