@@ -154,27 +154,17 @@ resource "aws_route53_record" "maps" {
   }
 }
 
+resource "aws_route53_record" "maps" {
+  zone_id = "Z08017432VFWFXO6IWHIK"
+  name    = "maps.demo.pabrennan.com"
+  type    = "A"
 
-
-
-
-
-
-
-
-#resource "aws_route53_record" "maps" {
-#  zone_id = "Z08017432VFWFXO6IWHIK"    #data.aws_route53_zone.primary.zone_id
-#  name    = "maps.demo.pabrennan.com"
-#  type    = "A"
-
-#  alias {
-#    name                   = aws_lb.maps.dns_name
-#    zone_id                = "Z08017432VFWFXO6IWHIK"       #aws_lb.maps.zone_id
-#    evaluate_target_health = true
-#  }
-#}
-
-
+  alias {
+    name                   = module.elb_http["maps"].elb_dns_name
+    zone_id                = module.elb_http["maps"].elb_zone_id
+    evaluate_target_health = true
+  }
+}
 
 
 
