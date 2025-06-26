@@ -75,7 +75,6 @@ module "lb_security_group" {
   ingress_cidr_blocks = ["0.0.0.0/0"]
 }
 
-
 #ADDED 6/25/2024
 # random string for uniqueness
 resource "random_string" "lb_id" {
@@ -89,22 +88,20 @@ resource "random_string" "lb_id" {
 #NEW ELB with name:
 locals {
   elb_names = {
-    for k, v in var.project :
-    k => (
-      k == "maps"
-      ? "maps.demo.pabrennan.com"
-      : trimsuffix(
-          substr(
-            join(
-              "",
-              regexall("[a-zA-Z0-9-]", join("-", ["lb", random_string.lb_id.result, k, v.environment]))
-            ),
-            0,
-            32
+    for k, v in var.project : k =>
+    k == "maps"
+    ? "maps.demo.pabrennan.com"
+    : trimsuffix(
+        substr(
+          join(
+            "",
+            regexall("[a-zA-Z0-9-]", join("-", ["lb", random_string.lb_id.result, k, v.environment]))
           ),
-          "-"
-        )
-    )
+          0,
+          32
+        ),
+        "-"
+      )
   }
 }
 
