@@ -155,6 +155,22 @@ module "elb_http" {
   depends_on = [module.ec2_instances]
 }
 
+#ADDED 6/26/2025
+data "aws_route53_zone" "primary" {
+  name         = "pabrennan.com"
+  private_zone = false
+}
+
+resource "aws_route53_record" "app_dns" {
+  for_each = { for k, v in var.project : k => v if v.environment == "prod" } # Filter if needed
+
+  zone_id = data.aws_route53_zone.primary.zone_id
+  name    = "maps-${each.key}.${data.aws_route53_zone.primary.name}"
+  type    = "CNAME"
+  ttl     = 300
+  records = [module.elb_http[each.key].elb_dns_name]
+}
+
 #ADDED  12-19-2023
 ##resource "aws_route53_record" "tf-demo" {
 ##  zone_id = "Z08017432VFWFXO6IWHIK"
