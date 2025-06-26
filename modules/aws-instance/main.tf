@@ -1,3 +1,12 @@
+#ADDED 6/26/2025
+variable "ssh_key_name" {
+  description = "Name of the SSH key pair"
+  type        = string
+  default     = ""
+}
+
+
+
 data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
@@ -19,7 +28,9 @@ resource "aws_instance" "app" {
 
   #added public IP 12/15/2023
   associate_public_ip_address = true
-  
+
+  #ADDED 6/26/2025
+  key_name = var.ssh_key_name
   user_data = <<-EOF
     #!/bin/bash
     echo "Installing Pat's Google Maps Application"
