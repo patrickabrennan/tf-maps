@@ -1,24 +1,24 @@
-#Commented out items now that we are using for_each on 11/28/2023
-#output "public_dns_name" {
-#  description = "Public DNS name of load balancer"
-#  value       = module.elb_http.elb_dns_name
-#}
+#ADDED 6/26/2025
+output "maps_dns_record_name" {
+  description = "The DNS name for maps.demo.pabrennan.com Route53 record"
+  value       = aws_route53_record.maps.name
+}
 
-#output "vpc_arn" {
-#  description = "ARN of the vpc"
-#  value       = module.vpc.vpc_arn
-#}
+output "maps_dns_record_fqdn" {
+  description = "The FQDN created in Route53 for maps"
+  value       = aws_route53_record.maps.fqdn
+}
 
-#output "instance_ids" {
-#  description = "IDs of EC2 instances"
-#  value       = aws_instance.app.*.id
-#}
-#Added below 11/28/2023
-##output "public_dns_names" {
-##  description = "Public DNS names of the load balancers for each project."
-##  #value       = { for p in sort(keys(var.project)) : p => module.elb_http[p].elb_dns_name }
-##  value       = module.elb_http["client-webapp"].elb_dns_name
-##}
+output "maps_elb_dns_name" {
+  description = "The AWS-assigned DNS name of the maps load balancer"
+  value       = module.elb_http["backend"].elb_dns_name
+}
+
+output "maps_elb_zone_id" {
+  description = "The zone ID of the load balancer, used for Route53 alias"
+  value       = module.elb_http["backend"].elb_zone_id
+}
+
 
 output "vpc_arns" {
   description = "ARNs of the vpcs for each project."
@@ -29,4 +29,3 @@ output "instance_ids" {
   description = "IDs of EC2 instances."
   value       = { for p in sort(keys(var.project)) : p => module.ec2_instances[p].instance_ids }
 }
-
