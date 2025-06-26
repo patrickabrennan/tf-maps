@@ -4,14 +4,12 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-#added for OIDC 
-#variable "web_identity_token_file" {
-#  type = string
-#}
-
-#variable "role_arn" {
-#  type = string
-#}
+#ADDED 6-25-25
+# Optional externalized cert ARN
+variable "acm_certificate_arn" {
+  description = "ACM certificate ARN for HTTPS"
+  type        = string
+}
 
 #end of OIDC part 
 #BEGIN OF REMOVAL OF ORIGINAL STUFF 11/28/2023
