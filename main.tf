@@ -231,10 +231,11 @@ module "ec2_instances" {
 
 #ADDED 6/26/2025
 resource "aws_key_pair" "deployer" {
-  #key_name   = var.ssh_key_name
-  public_key = "/Users/patrick.brennan/.ssh/id_rsa.pub"
+  key_name   = var.ssh_key_name
   public_key = file(var.ssh_public_key_path)
 }
+
+
 
 #Comment out data "aws_ami" "amazon_linux" 11/28/2023 as will be using a module
 #data "aws_ami" "amazon_linux" {
