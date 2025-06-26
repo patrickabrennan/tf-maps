@@ -1,3 +1,17 @@
+#ADDED 6/26/2025
+variable "ssh_key_name" {
+  description = "Name of the AWS SSH Key Pair"
+  type        = string
+}
+
+variable "ssh_public_key_path" {
+  description = "Path to your SSH public key"
+  type        = string
+  default     = "~/.ssh/id_rsa.pub"
+}
+
+
+
 variable "aws_region" {
   description = "AWS region for all resources."
   type        = string
