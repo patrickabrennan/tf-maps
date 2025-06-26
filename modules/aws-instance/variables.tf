@@ -1,9 +1,3 @@
-#ADDED 6/26/2025
-variable "public_key" {
-  type        = string
-  description = "Public SSH key content"
-}
-
 variable "instance_count" {
   description = "Number of EC2 instances to deploy"
   type        = number
