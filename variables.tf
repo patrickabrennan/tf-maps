@@ -46,28 +46,51 @@ variable "aws_region" {
 #}
 #END OF REMOVAL ORIGINAL STUFF 11/28/2023
 
-#BEGIN OF NEW STUFF 11/28/2023
-variable "project" {
-  description = "Map of project names to configuration."
-  type        = map(any)
 
+#NEW NESTED VARIABLES 6/25/25
+variable "project" {
+  type = map(any)
   default = {
     client-webapp = {
-      public_subnets_per_vpc  = 2,
-      private_subnets_per_vpc = 2,
-      instances_per_subnet    = 2,
-      instance_type           = "t3.small",
-      environment             = "dev"
-    },
-    internal-webapp = {
-      public_subnets_per_vpc  = 1,
-      private_subnets_per_vpc = 1,
-      instances_per_subnet    = 2,
-      instance_type           = "t3.small",
-      environment             = "test"
+      environment              = "dev"
+      private_subnets_per_vpc  = 2
+      public_subnets_per_vpc   = 2
+      instances_per_subnet     = 2
+      instance_type            = "t2.micro"
+    }
+    client-api = {
+      environment              = "prod"
+      private_subnets_per_vpc  = 3
+      public_subnets_per_vpc   = 3
+      instances_per_subnet     = 1
+      instance_type            = "t3.micro"
     }
   }
 }
+
+
+##BEGIN OF NEW STUFF 11/28/2023
+#variable "project" {
+#  description = "Map of project names to configuration."
+#  type        = map(any)
+
+#  default = {
+#    client-webapp = {
+#      public_subnets_per_vpc  = 2,
+#      private_subnets_per_vpc = 2,
+#      instances_per_subnet    = 2,
+#      instance_type           = "t3.small",
+#      environment             = "dev"
+#    },
+#    internal-webapp = {
+#      public_subnets_per_vpc  = 1,
+#      private_subnets_per_vpc = 1,
+#      instances_per_subnet    = 2,
+#      instance_type           = "t3.small",
+#      environment             = "test"
+#    }
+#  }
+#}
 #END OF NEW ITEMS 11/28/2023
 
 
