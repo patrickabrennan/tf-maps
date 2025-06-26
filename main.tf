@@ -168,7 +168,7 @@ resource "aws_route53_record" "maps" {
 #  type    = "CNAME"
 #  ttl     = 300
 #  records = [module.elb_http[each.key].elb_dns_name]
-}
+#}
 
 #NEW EC2 INSSTANCE MNODE 6/26/2025
 module "ec2_instances" {
