@@ -142,7 +142,7 @@ module "elb_http" {
     instance_protocol  = "HTTP"
     lb_port            = "443"
     lb_protocol        = "HTTPS"
-    ssl_certificate_id = "arn:aws:acm:us-east-2:285942769742:certificate/c8842388-a5db-414d-9378-a98d4642455b"
+    ssl_certificate_id = var.acm_certificate_arn
   }]
 
   health_check = {
