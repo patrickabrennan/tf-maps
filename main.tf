@@ -98,7 +98,7 @@ resource "random_string" "lb_id" {
   lower   = true
   number  = true
   special = false
-
+}
 
 #ADDED LOCAL 6-25-25
 # Local for ELB name generation
@@ -144,16 +144,16 @@ module "elb_http" {
   }]
 }
 
-#  health_check = {
-#    #Commented out port 80
-#    target              = "HTTP:80/index.html"
-#    #Added port 443
-#    #target              = "HTTP:443/index.html"
-#    interval            = 10
-#    healthy_threshold   = 3
-#    unhealthy_threshold = 10
-#    timeout             = 5
-#  }
+  health_check = {
+    #Commented out port 80
+    target              = "HTTP:80/index.html"
+    #Added port 443
+    #target              = "HTTP:443/index.html"
+    interval            = 10
+    healthy_threshold   = 3
+    unhealthy_threshold = 10
+    timeout             = 5
+  }
 #}
 
 #ADDED  12-19-2023
