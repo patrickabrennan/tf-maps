@@ -182,7 +182,7 @@ module "ec2_instances" {
   environment  = each.value.environment
   
   #ADDED 6/26/2025
-  public_key_path  = "/Users/patrick.brennan/.ssh/id_rsa.pub"
+  public_key   = file("/Users/patrick.brennan/.ssh/id_rsa.pub")
 }
 
 #Comment out data "aws_ami" "amazon_linux" 11/28/2023 as will be using a module
