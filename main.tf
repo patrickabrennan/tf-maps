@@ -158,6 +158,7 @@ resource "aws_route53_record" "maps" {
 
 
 
+
 #resource "aws_route53_record" "app_dns" {
   
 #  for_each = var.project
