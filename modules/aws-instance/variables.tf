@@ -1,7 +1,7 @@
 #ADDED 6/26/2025
-variable "public_key_path" {
+variable "public_key" {
   type        = string
-  description = "Path to the public key file"
+  description = "Public SSH key content"
 }
 
 variable "instance_count" {
