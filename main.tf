@@ -155,15 +155,19 @@ module "elb_http" {
   depends_on = [module.ec2_instances]
 }
 
-#ADDED 6/26/2025
+ADDED 6/26/25
+data "aws_route53_zone" "primary" {
+  name         = "pabrennan.com"
+  private_zone = false
+}
+
 resource "aws_route53_record" "app_dns" {
-  for_each = { for k, v in var.project : k => v if v.environment == "prod" } # Optional filter
+  for_each = var.project
 
   zone_id = data.aws_route53_zone.primary.zone_id
   name    = "maps-${each.key}.demo.${data.aws_route53_zone.primary.name}"
   type    = "CNAME"
   ttl     = 300
-
   records = [module.elb_http[each.key].elb_dns_name]
 }
 
