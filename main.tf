@@ -143,7 +143,6 @@ module "elb_http" {
     lb_protocol        = "HTTPS"
     ssl_certificate_id = var.acm_certificate_arn
   }]
-}
 
   health_check = {
     #Commented out port 80
@@ -155,7 +154,8 @@ module "elb_http" {
     unhealthy_threshold = 10
     timeout             = 5
   }
-#}
+  depends_on = [module.ec2_instances]
+}
 
 #ADDED  12-19-2023
 resource "aws_route53_record" "tf-demo" {
