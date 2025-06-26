@@ -143,18 +143,6 @@ module "elb_http" {
 
 #ADDED 6/26/25
 resource "aws_route53_record" "maps" {
-  zone_id = "Z08017432VFWFXO6IWHIK"            # data.aws_route53_zone.primary.zone_id
-  name    = "maps.demo.pabrennan.com"
-  type    = "A"
-
-  alias {
-    name                   = aws_lb.this["maps"].dns_name
-    zone_id                = aws_lb.this["maps"].zone_id
-    evaluate_target_health = true
-  }
-}
-
-resource "aws_route53_record" "maps" {
   zone_id = "Z08017432VFWFXO6IWHIK"
   name    = "maps.demo.pabrennan.com"
   type    = "A"
