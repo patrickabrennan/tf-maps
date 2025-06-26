@@ -4,11 +4,6 @@ variable "ssh_key_name" {
   type        = string
 }
 
-variable "ssh_public_key_path" {
-  description = "Path to your SSH public key"
-  type        = string
-}
-
 
 
 variable "aws_region" {
