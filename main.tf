@@ -148,11 +148,12 @@ resource "aws_route53_record" "maps" {
   type    = "A"
 
   alias {
-    name                   = module.elb_http["maps"].elb_dns_name
-    zone_id                = module.elb_http["maps"].elb_zone_id
+    name                   = module.elb_http["backend"].elb_dns_name
+    zone_id                = module.elb_http["backend"].elb_zone_id
     evaluate_target_health = true
   }
 }
+
 
 
 
