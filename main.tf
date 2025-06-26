@@ -203,14 +203,14 @@ module "ec2_instances" {
 #  subnet_id              = module.vpc.private_subnets[0]
 #  vpc_security_group_ids = [module.app_security_group.security_group_id]
 
-#  user_data = <<-EOF
-#    #!/bin/bash
-#    sudo yum update -y
-#    sudo yum install httpd -y
-#    sudo systemctl enable httpd
-#    sudo systemctl start httpd
-#    echo "<html><body><div>Hello, world!</div></body></html>" > /var/www/html/index.html
-#    EOF
+  user_data = <<-EOF
+    #!/bin/bash
+    sudo yum update -y
+    sudo yum install httpd -y
+    sudo systemctl enable httpd
+    sudo systemctl start httpd
+    echo "<html><body><div>Hello, world!</div></body></html>" > /var/www/html/index.html
+    EOF
 
 #  tags = {
 #    Terraform   = "true"
