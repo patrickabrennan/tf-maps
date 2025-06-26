@@ -4,7 +4,10 @@ variable "ssh_key_name" {
   type        = string
 }
 
-
+variable "ssh_public_key" {
+  description = "SSH Public Key"
+  type        = string
+}
 
 variable "aws_region" {
   description = "AWS region for all resources."
