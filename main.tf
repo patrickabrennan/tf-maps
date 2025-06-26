@@ -43,34 +43,60 @@ module "vpc" {
   map_public_ip_on_launch = false
 }
 
+#module "app_security_group" {
+#  source  = "terraform-aws-modules/security-group/aws//modules/web"
+#  version = "4.9.0"
+#  #module "https_443_security_group" {
+#  #source  = "terraform-aws-modules/security-group/aws//modules/https-443"
+#  #version = "~> 5.0"
+
+#  #Added 11/28/2023 
+#  for_each = var.project
+
+#  #Added 11/28/2023
+#  name        = "web-server-sg-${each.key}-${each.value.environment}"
+
+#  #commented out
+#  #name        = "web-server-sg-${var.project_name}-${var.environment}"
+#  description = "Security group for web-servers with HTTP ports open within VPC"
+
+
+#  #Added 11/28/
+#  vpc_id      = module.vpc[each.key].vpc_id
+#  #commented out 11/28/2023
+#  #vpc_id      = module.vpc.vpc_id
+
+#  #Added 11/28/2023
+#  ingress_cidr_blocks = module.vpc[each.key].public_subnets_cidr_blocks
+#  #Commented out 11/28/2023 
+#  #ingress_cidr_blocks = module.vpc.public_subnets_cidr_blocks
+#}
+
+#NEW APP SECURITY GROUP
 module "app_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
   version = "4.9.0"
-  #module "https_443_security_group" {
-  #source  = "terraform-aws-modules/security-group/aws//modules/https-443"
-  #version = "~> 5.0"
 
-  #Added 11/28/2023 
   for_each = var.project
 
-  #Added 11/28/2023
   name        = "web-server-sg-${each.key}-${each.value.environment}"
-
-  #commented out
-  #name        = "web-server-sg-${var.project_name}-${var.environment}"
   description = "Security group for web-servers with HTTP ports open within VPC"
-
-
-  #Added 11/28/
   vpc_id      = module.vpc[each.key].vpc_id
-  #commented out 11/28/2023
-  #vpc_id      = module.vpc.vpc_id
-
-  #Added 11/28/2023
   ingress_cidr_blocks = module.vpc[each.key].public_subnets_cidr_blocks
-  #Commented out 11/28/2023 
-  #ingress_cidr_blocks = module.vpc.public_subnets_cidr_blocks
+
+  # Add SSH ingress rule
+  ingress = [
+    {
+      description      = "SSH"
+      from_port        = 22
+      to_port          = 22
+      protocol         = "tcp"
+      cidr_blocks      = ["0.0.0.0/0"] # or restrict to your IP range
+      ipv6_cidr_blocks = []
+    }
+  ]
 }
+
 
 module "lb_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
@@ -166,7 +192,7 @@ resource "aws_route53_record" "app_dns" {
   records = [module.elb_http[each.key].elb_dns_name]
 }
 
-#NEW EC2_INSTANCES MODULE 6/25/25
+#NEW EC2 INSSTANCE MNODE 6/26/2025
 module "ec2_instances" {
   source     = "./modules/aws-instance"
   depends_on = [module.vpc]
@@ -180,7 +206,33 @@ module "ec2_instances" {
 
   project_name = each.key
   environment  = each.value.environment
+
+  ssh_key_name = var.ssh_key_name   # Add this line
+}
+
+
+
+#NEW EC2_INSTANCES MODULE 6/25/25
+#module "ec2_instances" {
+#  source     = "./modules/aws-instance"
+#  depends_on = [module.vpc]
+
+#  for_each = { for p in local.flattened_projects : p.key => p }
+
+#  instance_count     = each.value.instances_per_subnet * length(module.vpc[each.key].private_subnets)
+#  instance_type      = each.value.instance_type
+#  subnet_ids         = module.vpc[each.key].private_subnets[*]
+#  security_group_ids = [module.app_security_group[each.key].security_group_id]
+
+#  project_name = each.key
+#  environment  = each.value.environment
   
+#}
+
+#ADDED 6/26/2025
+resource "aws_key_pair" "deployer" {
+  key_name   = var.ssh_key_name
+  public_key = file(var.ssh_public_key_path)
 }
 
 #Comment out data "aws_ami" "amazon_linux" 11/28/2023 as will be using a module
