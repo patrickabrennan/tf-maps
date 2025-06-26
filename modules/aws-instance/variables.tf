@@ -1,3 +1,9 @@
+#ADDED 6/26/2025
+variable "public_key_path" {
+  type        = string
+  description = "Path to the public key file"
+}
+
 variable "instance_count" {
   description = "Number of EC2 instances to deploy"
   type        = number
