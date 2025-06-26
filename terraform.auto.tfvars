@@ -9,14 +9,14 @@ project = {
     environment             = "dev"
     private_subnets_per_vpc = 2
     public_subnets_per_vpc  = 2
-    instances_per_subnet    = 3
+    instances_per_subnet    = 2
     instance_type           = "t3.micro"
   },
   backend = {
-    environment             = "prod"
-    private_subnets_per_vpc = 3
-    public_subnets_per_vpc  = 1
-    instances_per_subnet    = 4
+    environment             = "maps"    #was "prod"
+    private_subnets_per_vpc = 2
+    public_subnets_per_vpc  = 2
+    instances_per_subnet    = 3
     instance_type           = "t3.medium"
   }
 }
