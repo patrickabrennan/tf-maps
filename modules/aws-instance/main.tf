@@ -20,9 +20,6 @@ resource "aws_instance" "app" {
   #added public IP 12/15/2023
   associate_public_ip_address = true
   
-  #ADDED 6/26/2025
-  key_name = aws_key_pair.deployer.key_name
-
   user_data = <<-EOF
     #!/bin/bash
     echo "Installing Pat's Google Maps Application"
