@@ -136,59 +136,116 @@ module "lb_security_group" {
   ingress_cidr_blocks = ["0.0.0.0/0"]
 }
 
+
+#ADDED 6/25/2024
+# random string for uniqueness
 resource "random_string" "lb_id" {
-  length  = 4
+  length  = 6
+  upper   = false
+  lower   = true
+  number  = true
   special = false
+
+#resource "random_string" "lb_id" {
+#  length  = 4
+#  special = false
+#}
+
+#ADDED LOCAL 6-25-25
+# Local for ELB name generation
+locals {
+  elb_names = {
+    for k, v in var.project :
+    k => trimsuffix(
+      substr(
+        join(
+          "",
+          regexall("[a-zA-Z0-9-]", join("-", ["lb", random_string.lb_id.result, k, v.environment]))
+        ),
+        0,
+        32
+      ),
+      "-"
+    )
+  }
 }
 
+#ADDED NEW ELB MODULE
 module "elb_http" {
   source  = "terraform-aws-modules/elb/aws"
   version = "3.0.1"
 
-  #Added 11/28/2023
   for_each = var.project
 
-  # Comply with ELB name restrictions
-  # https://docs.aws.amazon.com/elasticloadbalancing/2012-06-01/APIReference/API_CreateLoadBalancer.html
-
-
-  #Added 11/28/2023
-  name     = trimsuffix(substr(replace(join("-", ["lb", random_string.lb_id.result, each.key, each.value.environment]), "/[^a-zA-Z0-9-]/", ""), 0, 32), "-")
-  #Commented out 11/28/2023
-  #name     = trimsuffix(substr(replace(join("-", ["lb", random_string.lb_id.result, var.project_name, var.environment]), "/[^a-zA-Z0-9-]/", ""), 0, 32), "-")
+  name     = local.elb_names[each.key]
   internal = false
 
-  #Added 11-28-2023
   security_groups = [module.lb_security_group[each.key].security_group_id]
   subnets         = module.vpc[each.key].public_subnets
 
-  #Commented out 11-28-2023
-  #security_groups = [module.lb_security_group.security_group_id]
-  #subnets         = module.vpc.public_subnets
-
-  #Added 11/28/2023
   number_of_instances = length(module.ec2_instances[each.key].instance_ids)
   instances           = module.ec2_instances[each.key].instance_ids
- 
-  #Commented out 11/28/2023
-  #number_of_instances = length(aws_instance.app)
-  #instances           = aws_instance.app.*.id
 
   listener = [{
-    instance_port     = "80"
-    #Added port 443
-    #instance_port     = "443"
-    instance_protocol = "HTTP"
-    #Added HTTPS
-    #instance_protocol = "HTTPS"
-    #lb_port           = "80"
-    #Added port 443
-    lb_port           = "443"
-    #lb_protocol       = "HTTP"
-    #Added HTTPS
-    lb_protocol       = "HTTPS"
-    ssl_certificate_id = "arn:aws:acm:us-east-2:278697972666:certificate/8bda4860-342f-4412-9e48-68b506054282"
+    instance_port      = "80"
+    instance_protocol  = "HTTP"
+    lb_port            = "443"
+    lb_protocol        = "HTTPS"
+    ssl_certificate_id = var.acm_certificate_arn
   }]
+}
+
+
+
+
+#module "elb_http" {
+#  source  = "terraform-aws-modules/elb/aws"
+#  version = "3.0.1"
+
+#  #Added 11/28/2023
+#  for_each = var.project
+
+#  # Comply with ELB name restrictions
+#  # https://docs.aws.amazon.com/elasticloadbalancing/2012-06-01/APIReference/API_CreateLoadBalancer.html
+
+
+#  #Added 11/28/2023
+#  name     = trimsuffix(substr(replace(join("-", ["lb", random_string.lb_id.result, each.key, each.value.environment]), "/[^a-zA-Z0-9-]/", ""), 0, 32), "-")
+#  #Commented out 11/28/2023
+#  #name     = trimsuffix(substr(replace(join("-", ["lb", random_string.lb_id.result, var.project_name, var.environment]), "/[^a-zA-Z0-9-]/", ""), 0, 32), "-")
+#  internal = false
+
+#  #Added 11-28-2023
+#  security_groups = [module.lb_security_group[each.key].security_group_id]
+#  subnets         = module.vpc[each.key].public_subnets
+
+#  #Commented out 11-28-2023
+#  #security_groups = [module.lb_security_group.security_group_id]
+#  #subnets         = module.vpc.public_subnets
+
+#  #Added 11/28/2023
+#  number_of_instances = length(module.ec2_instances[each.key].instance_ids)
+#  instances           = module.ec2_instances[each.key].instance_ids
+ 
+#  #Commented out 11/28/2023
+#  #number_of_instances = length(aws_instance.app)
+#  #instances           = aws_instance.app.*.id
+
+#  listener = [{
+#    instance_port     = "80"
+#    #Added port 443
+#    #instance_port     = "443"
+#    instance_protocol = "HTTP"
+#    #Added HTTPS
+#    #instance_protocol = "HTTPS"
+#    #lb_port           = "80"
+#    #Added port 443
+#    lb_port           = "443"
+#    #lb_protocol       = "HTTP"
+#    #Added HTTPS
+#    lb_protocol       = "HTTPS"
+#    ssl_certificate_id = "arn:aws:acm:us-east-2:278697972666:certificate/8bda4860-342f-4412-9e48-68b506054282"
+#  }]
 
   health_check = {
     #Commented out port 80
