@@ -8,8 +8,8 @@ project = {
   frontend = {
     environment             = "dev"
     private_subnets_per_vpc = 1
-    public_subnets_per_vpc  = 0
-    instances_per_subnet    = 3
+    public_subnets_per_vpc  = 1
+    instances_per_subnet    = 1
     instance_type           = "t3.micro"
   },
   backend = {
