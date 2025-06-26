@@ -157,8 +157,8 @@ module "elb_http" {
 
 #ADDED 6/26/25
 data "aws_route53_zone" "primary" {
-  name         = "pabrennan.com"
-  private_zone = false
+  name         = "pabrennan.com."
+  #private_zone = false
 }
 
 resource "aws_route53_record" "app_dns" {
