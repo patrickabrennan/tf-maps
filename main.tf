@@ -126,22 +126,45 @@ resource "random_string" "lb_id" {
 
 #ADDED LOCAL 6-25-25
 # Local for ELB name generation
+#locals {
+#  elb_names = {
+#    for k, v in var.project :
+#    k => trimsuffix(
+#      substr(
+#        join(
+#          "",
+#          regexall("[a-zA-Z0-9-]", join("-", ["lb", random_string.lb_id.result, k, v.environment]))
+#        ),
+#        0,
+#        32
+#      ),
+#      "-"
+#    )
+#  }
+#}
+
+#NEW ELB with name:
 locals {
   elb_names = {
     for k, v in var.project :
-    k => trimsuffix(
-      substr(
-        join(
-          "",
-          regexall("[a-zA-Z0-9-]", join("-", ["lb", random_string.lb_id.result, k, v.environment]))
-        ),
-        0,
-        32
-      ),
-      "-"
+    k => (
+      k == "maps"
+      ? "maps.demo.pabrennan.com"
+      : trimsuffix(
+          substr(
+            join(
+              "",
+              regexall("[a-zA-Z0-9-]", join("-", ["lb", random_string.lb_id.result, k, v.environment]))
+            ),
+            0,
+            32
+          ),
+          "-"
+        )
     )
   }
 }
+
 
 #ADDED NEW ELB MODULE
 module "elb_http" {
@@ -191,6 +214,25 @@ resource "aws_route53_record" "app_dns" {
   ttl     = 300
   records = [module.elb_http[each.key].elb_dns_name]
 }
+
+
+
+
+
+
+
+
+
+
+#resource "aws_route53_record" "app_dns" {
+#  for_each = var.project
+
+#  zone_id = "Z08017432VFWFXO6IWHIK"  
+#  name    = "maps-${each.key}.demo.pabrennan.com"
+#  type    = "CNAME"
+#  ttl     = 300
+#  records = [module.elb_http[each.key].elb_dns_name]
+#}
 
 #NEW EC2 INSSTANCE MNODE 6/26/2025
 module "ec2_instances" {
