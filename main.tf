@@ -232,7 +232,7 @@ module "ec2_instances" {
 #ADDED 6/26/2025
 resource "aws_key_pair" "deployer" {
   #key_name   = var.ssh_key_name
-  ssh_public_key_path = "/Users/patrick.brennan/.ssh/id_rsa.pub"
+  public_key = "/Users/patrick.brennan/.ssh/id_rsa.pub"
   public_key = file(var.ssh_public_key_path)
 }
 
