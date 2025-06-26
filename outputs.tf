@@ -14,11 +14,11 @@
 #  value       = aws_instance.app.*.id
 #}
 #Added below 11/28/2023
-output "public_dns_names" {
-  description = "Public DNS names of the load balancers for each project."
-  #value       = { for p in sort(keys(var.project)) : p => module.elb_http[p].elb_dns_name }
-  value       = module.elb_http["client-webapp"].elb_dns_name
-}
+##output "public_dns_names" {
+##  description = "Public DNS names of the load balancers for each project."
+##  #value       = { for p in sort(keys(var.project)) : p => module.elb_http[p].elb_dns_name }
+##  value       = module.elb_http["client-webapp"].elb_dns_name
+##}
 
 output "vpc_arns" {
   description = "ARNs of the vpcs for each project."
