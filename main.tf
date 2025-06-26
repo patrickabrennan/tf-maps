@@ -80,22 +80,22 @@ module "app_security_group" {
   for_each = var.project
 
   name        = "web-server-sg-${each.key}-${each.value.environment}"
-  description = "Security group for web-servers with HTTP ports open within VPC"
+  description = "Security group for web-servers with HTTP and SSH ports open"
   vpc_id      = module.vpc[each.key].vpc_id
+
   ingress_cidr_blocks = module.vpc[each.key].public_subnets_cidr_blocks
 
-  # Add SSH ingress rule
-  ingress = [
+  ingress_with_cidr_blocks = [
     {
-      description      = "SSH"
-      from_port        = 22
-      to_port          = 22
-      protocol         = "tcp"
-      cidr_blocks      = ["0.0.0.0/0"] # or restrict to your IP range
-      ipv6_cidr_blocks = []
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      description = "SSH access"
+      cidr_blocks = "0.0.0.0/0" # or restrict to your IP range
     }
   ]
 }
+
 
 
 module "lb_security_group" {
