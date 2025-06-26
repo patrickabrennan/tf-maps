@@ -20,30 +20,66 @@ data "aws_availability_zones" "available" {
   }
 }
 
+##ADDED 6/25/2025
+locals {
+  flattened_projects = flatten([
+    for project_key, project in var.project : [
+      {
+        key                         = project_key
+        environment                 = project.environment
+        private_subnets_per_vpc     = project.private_subnets_per_vpc
+        public_subnets_per_vpc      = project.public_subnets_per_vpc
+        instances_per_subnet        = project.instances_per_subnet
+        instance_type               = project.instance_type
+      }
+    ]
+  ])
+}
+
+##NEW VPC Module ADDED 6/25/25
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.14.2"
 
-  for_each = var.project
+  for_each = { for p in local.flattened_projects : p.key => p }
 
   cidr = var.vpc_cidr_block
+  azs  = data.aws_availability_zones.available.names
 
-  azs             = data.aws_availability_zones.available.names
-
-  #Added 11/28/2023 to support for_each
   private_subnets = slice(var.private_subnet_cidr_blocks, 0, each.value.private_subnets_per_vpc)
   public_subnets  = slice(var.public_subnet_cidr_blocks, 0, each.value.public_subnets_per_vpc)
 
-  #Commented out 11/28/2023
-  #private_subnets = slice(var.private_subnet_cidr_blocks, 0, var.private_subnets_per_vpc)
-  #public_subnets  = slice(var.public_subnet_cidr_blocks, 0, var.public_subnets_per_vpc)
-
-
-  enable_nat_gateway = true
-  enable_vpn_gateway = false
-
+  enable_nat_gateway      = true
+  enable_vpn_gateway      = false
   map_public_ip_on_launch = false
 }
+
+
+#COMMNET OUT 6/25/25
+#module "vpc" {
+#  source  = "terraform-aws-modules/vpc/aws"
+#  version = "3.14.2"
+
+#  for_each = var.project
+
+#  cidr = var.vpc_cidr_block
+
+#  azs             = data.aws_availability_zones.available.names
+
+#  #Added 11/28/2023 to support for_each
+#  private_subnets = slice(var.private_subnet_cidr_blocks, 0, each.value.private_subnets_per_vpc)
+#  public_subnets  = slice(var.public_subnet_cidr_blocks, 0, each.value.public_subnets_per_vpc)
+
+#  #Commented out 11/28/2023
+#  #private_subnets = slice(var.private_subnet_cidr_blocks, 0, var.private_subnets_per_vpc)
+#  #public_subnets  = slice(var.public_subnet_cidr_blocks, 0, var.public_subnets_per_vpc)
+
+
+#  enable_nat_gateway = true
+#  enable_vpn_gateway = false
+
+#  map_public_ip_on_launch = false
+#}
 
 module "app_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
@@ -177,12 +213,12 @@ resource "aws_route53_record" "tf-demo" {
 }
 
 
-#Add local module 11/28/2023
+#NEW EC2_INSTANCES MODULE 6/25/25
 module "ec2_instances" {
   source     = "./modules/aws-instance"
   depends_on = [module.vpc]
 
-  for_each = var.project
+  for_each = { for p in local.flattened_projects : p.key => p }
 
   instance_count     = each.value.instances_per_subnet * length(module.vpc[each.key].private_subnets)
   instance_type      = each.value.instance_type
@@ -192,6 +228,22 @@ module "ec2_instances" {
   project_name = each.key
   environment  = each.value.environment
 }
+
+##Add local module 11/28/2023
+#module "ec2_instances" {
+#  source     = "./modules/aws-instance"
+#  depends_on = [module.vpc]
+
+#  for_each = var.project
+
+#  instance_count     = each.value.instances_per_subnet * length(module.vpc[each.key].private_subnets)
+#  instance_type      = each.value.instance_type
+#  subnet_ids         = module.vpc[each.key].private_subnets[*]
+#  security_group_ids = [module.app_security_group[each.key].security_group_id]
+
+#  project_name = each.key
+#  environment  = each.value.environment
+#}
 
 
 
