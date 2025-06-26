@@ -7,7 +7,7 @@ variable "ssh_key_name" {
 variable "ssh_public_key_path" {
   description = "Path to your SSH public key"
   type        = string
-  default     = "~/.ssh/id_rsa.pub"
+  default     = "/Users/patrick.brennan/.ssh/id_rsa.pub"
 }
 
 
