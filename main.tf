@@ -232,6 +232,7 @@ module "ec2_instances" {
 #ADDED 6/26/2025
 resource "aws_key_pair" "deployer" {
   key_name   = var.ssh_key_name
+  public_key = var.ssh_public_key
 }
 
 
