@@ -13,18 +13,16 @@ data "aws_availability_zones" "available" {
 
 ##ADDED 6/25/2025
 locals {
-  flattened_projects = flatten([
-    for project_key, project in var.project : [
-      {
-        key                         = project_key
-        environment                 = project.environment
-        private_subnets_per_vpc     = project.private_subnets_per_vpc
-        public_subnets_per_vpc      = project.public_subnets_per_vpc
-        instances_per_subnet        = project.instances_per_subnet
-        instance_type               = project.instance_type
-      }
-    ]
-  ])
+  flattened_projects = [
+    for project_key, project in var.project : {
+      key                         = project_key
+      environment                 = project.environment
+      private_subnets_per_vpc     = project.private_subnets_per_vpc
+      public_subnets_per_vpc      = project.public_subnets_per_vpc
+      instances_per_subnet        = project.instances_per_subnet
+      instance_type               = project.instance_type
+    }
+  ]
 }
 
 ##NEW VPC Module ADDED 6/25/25
