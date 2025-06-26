@@ -7,7 +7,7 @@ project = {
     environment = "prod"
   }
 }
-acm_certificate_arn = "arn:aws:acm:us-east-2:278697972666:certificate/8bda4860-342f-4412-9e48-68b506054282"
+acm_certificate_arn = "arn:aws:acm:us-east-2:285942769742:certificate/c8842388-a5db-414d-9378-a98d4642455b"
 
 #private_subnets_per_vpc = 1
 #public_subnets_per_vpc = 1
