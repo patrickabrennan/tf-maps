@@ -161,11 +161,13 @@ data "aws_route53_zone" "primary" {
   private_zone = false
 }
 
-resource "aws_route53_record" "app_dns" {
-  for_each = { for k, v in var.project : k => v if v.environment == "prod" } # Filter if needed
+#resource "aws_route53_record" "app_dns" {
+#  for_each = { for k, v in var.project : k => v if v.environment == "prod" } # Filter if needed
 
-  zone_id = data.aws_route53_zone.primary.zone_id
-  name    = "maps-${each.key}.${data.aws_route53_zone.primary.name}"
+  zone_id = "Z08017432VFWFXO6IWHIK"
+  #zone_id = data.aws_route53_zone.primary.zone_id
+  name    = "maps-${each.key}.demo.pabrennan.com"
+  #name    = "maps-${each.key}.${data.aws_route53_zone.primary.name}"
   type    = "CNAME"
   ttl     = 300
   records = [module.elb_http[each.key].elb_dns_name]
