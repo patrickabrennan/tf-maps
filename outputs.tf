@@ -1,15 +1,18 @@
 #ADDED 6/27/2025
 output "maps_dns_record_name" {
-  value       = aws_route53_record.maps[0].name
+  value       = length(aws_route53_record.maps) > 0 ? aws_route53_record.maps[0].name : null
   description = "DNS name of the Route 53 record for maps"
-  condition   = length(aws_route53_record.maps) > 0
 }
 
 output "maps_dns_record_fqdn" {
-  value       = aws_route53_record.maps[0].fqdn
+  value       = length(aws_route53_record.maps) > 0 ? aws_route53_record.maps[0].fqdn : null
   description = "FQDN of the Route 53 record for maps"
-  condition   = length(aws_route53_record.maps) > 0
 }
+
+
+
+
+
 
 output "maps_elb_dns_name" {
   description = "The AWS-assigned DNS name of the maps load balancer"
