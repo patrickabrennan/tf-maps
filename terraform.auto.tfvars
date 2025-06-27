@@ -7,9 +7,9 @@ vpc_cidr_block = "10.0.0.0/16"
 project = {
   frontend = {
     environment             = "dev"
-    private_subnets_per_vpc = 1
-    public_subnets_per_vpc  = 1
-    instances_per_subnet    = 1
+    private_subnets_per_vpc = 0
+    public_subnets_per_vpc  = 0
+    instances_per_subnet    = 0
     instance_type           = "t3.micro"
   },
   backend = {
