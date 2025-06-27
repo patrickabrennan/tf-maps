@@ -87,21 +87,21 @@ module "app_security_group" {
       to_port     = 22
       protocol    = "tcp"
       description = "Allow SSH"
-      cidr_blocks = ["0.0.0.0/0"] # Replace with office IP if desired
+      cidr_blocks = "0.0.0.0/0"
     },
     {
       from_port   = 80
       to_port     = 80
       protocol    = "tcp"
       description = "Allow HTTP"
-      cidr_blocks = ["0.0.0.0/0"]
+      cidr_blocks = "0.0.0.0/0"
     },
     {
       from_port   = 443
       to_port     = 443
       protocol    = "tcp"
       description = "Allow HTTPS"
-      cidr_blocks = ["0.0.0.0/0"]
+      cidr_blocks = "0.0.0.0/0"
     }
   ]
 }
