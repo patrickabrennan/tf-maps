@@ -90,13 +90,12 @@ module "lb_security_group" {
   ingress_cidr_blocks = ["0.0.0.0/0"]
 }
 
-#ADDED 6/25/2024
-# random string for uniqueness
+#ADDED 6/27/2024
 resource "random_string" "lb_id" {
   length  = 6
   upper   = false
   lower   = true
-  number  = true
+  numeric = true
   special = false
 }
 
@@ -174,21 +173,6 @@ resource "aws_route53_record" "maps" {
     evaluate_target_health = true
   }
 }
-
-
-
-#ADDED 6/26/25
-#resource "aws_route53_record" "maps" {
-#  zone_id = "Z08017432VFWFXO6IWHIK"
-#  name    = "maps.demo.pabrennan.com"
-#  type    = "A"
-#elb_http
-#  alias {
-#    name                   = module.elb_http["backend"].elb_dns_name
-#    zone_id                = module.elb_http["backend"].elb_zone_id
-#    evaluate_target_health = true
-#  }
-#}
 
 #NEW EC2 INSSTANCE MNODE 6/26/2025
 module "ec2_instances" {
