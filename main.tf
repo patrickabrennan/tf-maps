@@ -32,7 +32,6 @@ module "vpc" {
 
   #for_each = { for p in local.flattened_projects : p.key => p }
 #ADDED 6/27/2025
-module "vpc" {
   for_each = {
     for p in local.flattened_projects : p.key => p
     if p.private_subnets_per_vpc > 0 || p.public_subnets_per_vpc > 0
