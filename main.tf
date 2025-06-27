@@ -76,37 +76,32 @@ module "vpc" {
 #  map_public_ip_on_launch = false
 #}
 
-#NEW APP SECURITY GROUP
+#NEW APP SECURITY GROUP 6/27/2025
 module "app_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
   version = "4.9.0"
 
-#ADDED 6/27/2025  
-#for_each = var.project
-#  for_each = {
-#    for k, v in var.project : k => v
-#    if try(module.vpc[k].vpc_id, null) != null
-#  }
-# For app_security_group
   for_each = {
     for p in local.flattened_projects : p.key => p
     if p.private_subnets_per_vpc > 0 || p.public_subnets_per_vpc > 0
   }
 
-
   name        = "web-server-sg-${each.key}-${each.value.environment}"
   description = "Security group for web-servers with HTTP and SSH ports open"
   vpc_id      = module.vpc[each.key].vpc_id
-  ingress_cidr_blocks = module.vpc[each.key].public_subnets_cidr_blocks
-  ingress_with_cidr_blocks = [
+
+  ingress_with_cidr_blocks = length(module.vpc[each.key].public_subnets_cidr_blocks) > 0 ? [
     {
       from_port   = 22
       to_port     = 22
       protocol    = "tcp"
       description = "SSH access"
-      cidr_blocks = "0.0.0.0/0" # or restrict to your IP range
+      cidr_blocks = "0.0.0.0/0"
     }
-  ]
+  ] : []
+
+  # Optional fallback
+  ingress_self = length(module.vpc[each.key].public_subnets_cidr_blocks) == 0 ? true : false
 }
 
 module "lb_security_group" {
