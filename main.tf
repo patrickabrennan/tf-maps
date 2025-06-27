@@ -46,15 +46,6 @@ module "vpc" {
   map_public_ip_on_launch = false
 }
 
-
-
-
-
-
-
-
-
-
 #NEW VPC Module ADDED 6/25/25
 #module "vpc" {
 #  source  = "terraform-aws-modules/vpc/aws"
@@ -99,9 +90,6 @@ module "app_security_group" {
       cidr_blocks = "0.0.0.0/0"
     }
   ] : []
-
-  # Optional fallback
-  ingress_self = length(module.vpc[each.key].public_subnets_cidr_blocks) == 0 ? true : false
 }
 
 module "lb_security_group" {
