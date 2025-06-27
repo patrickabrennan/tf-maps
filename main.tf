@@ -81,16 +81,33 @@ module "app_security_group" {
   description = "Security group for web-servers with HTTP and SSH ports open"
   vpc_id      = module.vpc[each.key].vpc_id
 
-  ingress_with_cidr_blocks = length(module.vpc[each.key].public_subnets_cidr_blocks) > 0 ? [
+  ingress_with_cidr_blocks = [
     {
       from_port   = 22
       to_port     = 22
       protocol    = "tcp"
-      description = "SSH access"
-      cidr_blocks = "0.0.0.0/0"
+      description = "Allow SSH"
+      cidr_blocks = ["0.0.0.0/0"] # Replace with office IP if desired
+    },
+    {
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      description = "Allow HTTP"
+      cidr_blocks = ["0.0.0.0/0"]
+    },
+    {
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      description = "Allow HTTPS"
+      cidr_blocks = ["0.0.0.0/0"]
     }
-  ] : []
+  ]
 }
+
+
+
 
 module "lb_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
