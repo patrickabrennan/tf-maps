@@ -69,7 +69,7 @@ module "vpc" {
 
 #NEW APP SECURITY GROUP 6/27/2025
 module "app_security_group" {
-  source  = "terraform-aws-modules/security-group/aws//modules/web"
+  source  = "terraform-aws-modules/security-group/aws"
   version = "4.9.0"
 
   for_each = {
@@ -105,9 +105,6 @@ module "app_security_group" {
     }
   ]
 }
-
-
-
 
 module "lb_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
