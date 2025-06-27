@@ -161,7 +161,7 @@ module "elb_http" {
   depends_on = [module.ec2_instances]
 }
 
-ADDED 6/27/2025
+#ADDED 6/27/2025
 resource "aws_route53_record" "maps" {
   count   = contains(keys(module.elb_http), "backend") ? 1 : 0
   zone_id = "Z08017432VFWFXO6IWHIK"
