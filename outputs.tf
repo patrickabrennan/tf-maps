@@ -1,12 +1,14 @@
-#ADDED 6/26/2025
+#ADDED 6/27/2025
 output "maps_dns_record_name" {
-  description = "The DNS name for maps.demo.pabrennan.com Route53 record"
-  value       = aws_route53_record.maps.name
+  value       = aws_route53_record.maps[0].name
+  description = "DNS name of the Route 53 record for maps"
+  condition   = length(aws_route53_record.maps) > 0
 }
 
 output "maps_dns_record_fqdn" {
-  description = "The FQDN created in Route53 for maps"
-  value       = aws_route53_record.maps.fqdn
+  value       = aws_route53_record.maps[0].fqdn
+  description = "FQDN of the Route 53 record for maps"
+  condition   = length(aws_route53_record.maps) > 0
 }
 
 output "maps_elb_dns_name" {
