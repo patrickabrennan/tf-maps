@@ -10,13 +10,11 @@ output "maps_dns_record_fqdn" {
 }
 
 output "maps_elb_dns_name" {
-  description = "The AWS-assigned DNS name of the maps load balancer"
-  value       = module.elb_http["backend"].elb_dns_name
+  value = contains(keys(module.elb_http), "backend") ? module.elb_http["backend"].elb_dns_name : null
 }
 
 output "maps_elb_zone_id" {
-  description = "The zone ID of the load balancer, used for Route53 alias"
-  value       = module.elb_http["backend"].elb_zone_id
+  value = contains(keys(module.elb_http), "backend") ? module.elb_http["backend"].elb_zone_id : null
 }
 
 output "vpc_arns" {
