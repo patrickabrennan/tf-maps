@@ -25,13 +25,11 @@ locals {
   ]
 }
 
-##NEW VPC Module ADDED 6/25/25
+NEW VPC MODUKE ADDED 6/27/2025
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.14.2"
 
-  #for_each = { for p in local.flattened_projects : p.key => p }
-#ADDED 6/27/2025
   for_each = {
     for p in local.flattened_projects : p.key => p
     if p.private_subnets_per_vpc > 0 || p.public_subnets_per_vpc > 0
@@ -39,12 +37,44 @@ module "vpc" {
 
   cidr = var.vpc_cidr_block
   azs  = data.aws_availability_zones.available.names
+
   private_subnets = slice(var.private_subnet_cidr_blocks, 0, each.value.private_subnets_per_vpc)
-  public_subnets  = slice(var.public_subnet_cidr_blocks, 0, each.value.public_subnets_per_vpc)
-  enable_nat_gateway      = true
-  enable_vpn_gateway      = false
+  public_subnets  = each.value.public_subnets_per_vpc > 0 ? slice(var.public_subnet_cidr_blocks, 0, each.value.public_subnets_per_vpc) : []
+
+  enable_nat_gateway = each.value.public_subnets_per_vpc > 0 ? true : false
+  enable_vpn_gateway = false
   map_public_ip_on_launch = false
 }
+
+
+
+
+
+
+
+
+
+
+#NEW VPC Module ADDED 6/25/25
+#module "vpc" {
+#  source  = "terraform-aws-modules/vpc/aws"
+#  version = "3.14.2"
+
+#  #for_each = { for p in local.flattened_projects : p.key => p }
+##ADDED 6/27/2025
+#  for_each = {
+#    for p in local.flattened_projects : p.key => p
+#    if p.private_subnets_per_vpc > 0 || p.public_subnets_per_vpc > 0
+#  }
+
+#  cidr = var.vpc_cidr_block
+#  azs  = data.aws_availability_zones.available.names
+#  private_subnets = slice(var.private_subnet_cidr_blocks, 0, each.value.private_subnets_per_vpc)
+#  public_subnets  = slice(var.public_subnet_cidr_blocks, 0, each.value.public_subnets_per_vpc)
+#  enable_nat_gateway      = true
+#  enable_vpn_gateway      = false
+#  map_public_ip_on_launch = false
+#}
 
 #NEW APP SECURITY GROUP
 module "app_security_group" {
