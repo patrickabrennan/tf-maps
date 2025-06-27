@@ -30,7 +30,13 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.14.2"
 
-  for_each = { for p in local.flattened_projects : p.key => p }
+  #for_each = { for p in local.flattened_projects : p.key => p }
+#ADDED 6/27/2025
+module "vpc" {
+  for_each = {
+    for p in local.flattened_projects : p.key => p
+    if p.private_subnets_per_vpc > 0 || p.public_subnets_per_vpc > 0
+  }
 
   cidr = var.vpc_cidr_block
   azs  = data.aws_availability_zones.available.names
@@ -46,7 +52,12 @@ module "app_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
   version = "4.9.0"
 
-  for_each = var.project
+#ADDED 6/27/2025  
+#for_each = var.project
+  for_each = {
+    for k, v in var.project : k => v
+    if try(module.vpc[k].vpc_id, null) != null
+  }
 
   name        = "web-server-sg-${each.key}-${each.value.environment}"
   description = "Security group for web-servers with HTTP and SSH ports open"
@@ -67,7 +78,12 @@ module "lb_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
   version = "4.9.0"
   
-  for_each = var.project
+  #ADDED 6/27/2025
+  #for_each = var.project
+  for_each = {
+    for k, v in var.project : k => v
+    if try(module.vpc[k].vpc_id, null) != null
+  }
 
   name = "load-balancer-sg-${each.key}-${each.value.environment}"
   description = "Security group for load balancer with HTTP ports open within VPC"
@@ -110,8 +126,13 @@ module "elb_http" {
   source  = "terraform-aws-modules/elb/aws"
   version = "3.0.1"
 
+#ADDED 7/27/2025
   #Chaged for each code 6-25-25
-  for_each = { for p in local.flattened_projects : p.key => p }
+  #for_each = { for p in local.flattened_projects : p.key => p }
+  for_each = {
+    for p in local.flattened_projects : p.key => p
+    if p.public_subnets_per_vpc > 0 && p.private_subnets_per_vpc > 0
+  }
 
   name     = local.elb_names[each.key]
   internal = false
@@ -141,8 +162,9 @@ module "elb_http" {
   depends_on = [module.ec2_instances]
 }
 
-#ADDED 6/26/25
+ADDED 6/27/2025
 resource "aws_route53_record" "maps" {
+  count   = contains(keys(module.elb_http), "backend") ? 1 : 0
   zone_id = "Z08017432VFWFXO6IWHIK"
   name    = "maps.demo.pabrennan.com"
   type    = "A"
@@ -156,18 +178,17 @@ resource "aws_route53_record" "maps" {
 
 
 
-
-
-
-#resource "aws_route53_record" "app_dns" {
-  
-#  for_each = var.project
-
-#  zone_id = "Z08017432VFWFXO6IWHIK"  
-#  name    = "maps-${each.key}.demo.pabrennan.com"
-#  type    = "CNAME"
-#  ttl     = 300
-#  records = [module.elb_http[each.key].elb_dns_name]
+#ADDED 6/26/25
+#resource "aws_route53_record" "maps" {
+#  zone_id = "Z08017432VFWFXO6IWHIK"
+#  name    = "maps.demo.pabrennan.com"
+#  type    = "A"
+#elb_http
+#  alias {
+#    name                   = module.elb_http["backend"].elb_dns_name
+#    zone_id                = module.elb_http["backend"].elb_zone_id
+#    evaluate_target_health = true
+#  }
 #}
 
 #NEW EC2 INSSTANCE MNODE 6/26/2025
@@ -175,7 +196,12 @@ module "ec2_instances" {
   source     = "./modules/aws-instance"
   depends_on = [module.vpc]
 
-  for_each = { for p in local.flattened_projects : p.key => p }
+#Added 6/27/2025
+#  for_each = { for p in local.flattened_projects : p.key => p }
+  for_each = {
+    for p in local.flattened_projects : p.key => p
+    if p.private_subnets_per_vpc > 0
+  }
 
   instance_count     = each.value.instances_per_subnet * length(module.vpc[each.key].private_subnets)
   instance_type      = each.value.instance_type
