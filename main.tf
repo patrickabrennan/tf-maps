@@ -53,10 +53,16 @@ module "app_security_group" {
 
 #ADDED 6/27/2025  
 #for_each = var.project
+#  for_each = {
+#    for k, v in var.project : k => v
+#    if try(module.vpc[k].vpc_id, null) != null
+#  }
+# For app_security_group
   for_each = {
-    for k, v in var.project : k => v
-    if try(module.vpc[k].vpc_id, null) != null
+    for p in local.flattened_projects : p.key => p
+    if p.private_subnets_per_vpc > 0 || p.public_subnets_per_vpc > 0
   }
+
 
   name        = "web-server-sg-${each.key}-${each.value.environment}"
   description = "Security group for web-servers with HTTP and SSH ports open"
@@ -79,10 +85,16 @@ module "lb_security_group" {
   
   #ADDED 6/27/2025
   #for_each = var.project
+# For lb_security_group
   for_each = {
-    for k, v in var.project : k => v
-    if try(module.vpc[k].vpc_id, null) != null
+    for p in local.flattened_projects : p.key => p
+    if p.private_subnets_per_vpc > 0 || p.public_subnets_per_vpc > 0
   }
+
+#for_each = {
+#    for k, v in var.project : k => v
+#    if try(module.vpc[k].vpc_id, null) != null
+#  }
 
   name = "load-balancer-sg-${each.key}-${each.value.environment}"
   description = "Security group for load balancer with HTTP ports open within VPC"
