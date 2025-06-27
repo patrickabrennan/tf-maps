@@ -25,7 +25,7 @@ locals {
   ]
 }
 
-NEW VPC MODUKE ADDED 6/27/2025
+#NEW VPC MODUKE ADDED 6/27/2025
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.14.2"
