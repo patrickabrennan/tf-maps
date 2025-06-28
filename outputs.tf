@@ -1,20 +1,18 @@
 #ADDED 6/27/2025
-output "maps_dns_record_name" {
-  value       = length(aws_route53_record.maps) > 0 ? aws_route53_record.maps[0].name : null
-  description = "DNS name of the Route 53 record for maps"
-}
-
-output "maps_dns_record_fqdn" {
-  value       = length(aws_route53_record.maps) > 0 ? aws_route53_record.maps[0].fqdn : null
-  description = "FQDN of the Route 53 record for maps"
-}
-
 output "maps_elb_dns_name" {
-  value = contains(keys(module.elb_http), "backend") ? module.elb_http["backend"].elb_dns_name : null
+  value = try(module.elb_http["backend"].elb_dns_name, null)
 }
 
 output "maps_elb_zone_id" {
-  value = contains(keys(module.elb_http), "backend") ? module.elb_http["backend"].elb_zone_id : null
+  value = try(module.elb_http["backend"].elb_zone_id, null)
+}
+
+output "maps_dns_record_name" {
+  value = try(aws_route53_record.maps[0].name, null)
+}
+
+output "maps_dns_record_fqdn" {
+  value = try(aws_route53_record.maps[0].fqdn, null)
 }
 
 output "vpc_arns" {
