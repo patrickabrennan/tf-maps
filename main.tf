@@ -166,7 +166,7 @@ module "elb_http" {
       instance_protocol = "https"
       lb_port           = 443
       lb_protocol       = "https"
-      ssl_certificate_id = var.ssl_certificate_arn  # You must provide this ARN in variables if you want HTTPS
+      ssl_certificate_id = var.ssl_certificate_id  # You must provide this ARN in variables if you want HTTPS
     }
   ]
 
