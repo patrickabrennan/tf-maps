@@ -159,7 +159,7 @@ module "elb_http" {
       instance_protocol = "http"
       lb_port           = 80
       lb_protocol       = "http"
-      ssl_certificate_id = "" # leave empty or specify if you want SSL termination on ELB
+      ssl_certificate_id = var.ssl_certificate_id 
     },
     {
       instance_port     = 443
