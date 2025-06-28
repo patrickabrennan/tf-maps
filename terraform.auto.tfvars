@@ -13,9 +13,9 @@ project = {
     instance_type           = "t3.micro"
   },
   backend = {
-    environment             = "maps"    #was "prod"
-    private_subnets_per_vpc = 1
-    public_subnets_per_vpc  = 1
+    environment             = "maps"
+    private_subnets_per_vpc = 0
+    public_subnets_per_vpc  = 0
     instances_per_subnet    = 1
     instance_type           = "t3.small"
   }
