@@ -180,52 +180,6 @@ module "elb_http" {
   depends_on = [module.ec2_instances]
 }
 
-
-
-
-#module "elb_http" {
-#  source  = "terraform-aws-modules/elb/aws"
-#  version = "3.0.1"
-
-#  for_each = {
-#    for p in local.flattened_projects : p.key => p
-#    if p.public_subnets_per_vpc > 0 || p.private_subnets_per_vpc > 0
-#  }
-
-#  name     = local.elb_names[each.key]
-
-#  # ELB is internal if no public subnets
-#  internal = each.value.public_subnets_per_vpc == 0
-
-#  # Attach to all public + private subnets available
-#  subnets = concat(
-#    module.vpc[each.key].public_subnets,
-#    module.vpc[each.key].private_subnets
-#  )
-
-#  security_groups    = [module.lb_security_group[each.key].security_group_id]
-#  instances          = module.ec2_instances[each.key].instance_ids
-#  number_of_instances = length(module.ec2_instances[each.key].instance_ids)
-
-#  # Example listeners and health check (customize as needed)
-#  listener = {
-#    instance_port     = 80
-#    instance_protocol = "http"
-#    lb_port           = 80
-#    lb_protocol       = "http"
-#  }
-
-#  health_check = {
-#    healthy_threshold   = 2
-#    unhealthy_threshold = 2
-#    timeout             = 3
-#    target              = "HTTP:80/"
-#    interval            = 30
-#  }
-
-#  depends_on = [module.ec2_instances]
-#}
-
 # ROUTE53 RECORDS FOR ALL PROJECTS WITH ELB
 resource "aws_route53_record" "project_records" {
   for_each = module.elb_http
