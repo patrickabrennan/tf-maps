@@ -1,15 +1,15 @@
 #ADDED 6/28/2025
-variable "instance_count" {}
-variable "subnet_ids" {}
-variable "instance_type" {}
-variable "security_group_ids" {}
-variable "project_name" {}
-variable "environment" {}
-variable "ssh_key_name" {}
-variable "associate_public_ip_address" {
-  type    = bool
-  default = true
-}
+#variable "instance_count" {}
+#variable "subnet_ids" {}
+#variable "instance_type" {}
+#variable "security_group_ids" {}
+#variable "project_name" {}
+#variable "environment" {}
+#variable "ssh_key_name" {}
+#variable "associate_public_ip_address" {
+#  type    = bool
+#  default = true
+#}
 
 resource "aws_instance" "this" {
   count = var.instance_count
