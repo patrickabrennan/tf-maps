@@ -203,9 +203,11 @@ module "ec2_instances" {
       ? length(module.vpc[each.key].private_subnets)
       : length(module.vpc[each.key].public_subnets)
   )
-  subnet_ids                = each.value.private_subnets_per_vpc > 0
-                              ? module.vpc[each.key].private_subnets
-                              : module.vpc[each.key].public_subnets
+  subnet_ids = (
+    each.value.private_subnets_per_vpc > 0
+      ? module.vpc[each.key].private_subnets
+      : module.vpc[each.key].public_subnets
+  )
   associate_public_ip_address = each.value.public_subnets_per_vpc > 0
   instance_type             = each.value.instance_type
   security_group_ids        = [module.app_security_group[each.key].security_group_id]
