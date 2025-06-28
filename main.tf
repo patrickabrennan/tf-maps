@@ -141,10 +141,8 @@ module "elb_http" {
 
   name     = local.elb_names[each.key]
 
-  # ELB is internal only if no public subnets available
   internal = each.value.public_subnets_per_vpc == 0
 
-  # Attach ELB to either public subnets (for external access) or private subnets (internal ELB)
   subnets = each.value.public_subnets_per_vpc > 0
     ? module.vpc[each.key].public_subnets
     : module.vpc[each.key].private_subnets
