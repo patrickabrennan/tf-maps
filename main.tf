@@ -154,19 +154,19 @@ module "elb_http" {
 
   # Listeners - listen on HTTP (80) and HTTPS (443)
   listener = [
+    #{
+    #  instance_port     = 80
+    #  instance_protocol = "http"
+    #  lb_port           = 80
+    #  lb_protocol       = "http"
+    #  ssl_certificate_id = var.ssl_certificate_id 
+    #},
     {
       instance_port     = 80
-      instance_protocol = "http"
-      lb_port           = 80
-      lb_protocol       = "http"
-      ssl_certificate_id = var.ssl_certificate_id 
-    },
-    {
-      instance_port     = 443
       instance_protocol = "https"
       lb_port           = 443
       lb_protocol       = "https"
-      ssl_certificate_id = var.ssl_certificate_id  # You must provide this ARN in variables if you want HTTPS
+      ssl_certificate_id = var.ssl_certificate_id  
     }
   ]
 
