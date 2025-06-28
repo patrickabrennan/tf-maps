@@ -141,18 +141,18 @@ module "elb_http" {
 
   name     = local.elb_names[each.key]
 
+  # ELB is internal only if no public subnets available
   internal = each.value.public_subnets_per_vpc == 0
 
-  subnets = concat(
-    module.vpc[each.key].public_subnets,
-    module.vpc[each.key].private_subnets
-  )
+  # Attach ELB to either public subnets (for external access) or private subnets (internal ELB)
+  subnets = each.value.public_subnets_per_vpc > 0
+    ? module.vpc[each.key].public_subnets
+    : module.vpc[each.key].private_subnets
 
   security_groups    = [module.lb_security_group[each.key].security_group_id]
   instances          = module.ec2_instances[each.key].instance_ids
   number_of_instances = length(module.ec2_instances[each.key].instance_ids)
 
-  # Listeners - listen on HTTP (80) and HTTPS (443)
   listener = [
     {
       instance_port     = 80
@@ -179,6 +179,7 @@ module "elb_http" {
 
   depends_on = [module.ec2_instances]
 }
+
 
 
 
