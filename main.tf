@@ -141,29 +141,31 @@ module "elb_http" {
 
   name     = local.elb_names[each.key]
 
+  # Make it internal if there are no public subnets
   internal = each.value.public_subnets_per_vpc == 0
 
+  # Conditionally assign subnets: public if present, else private
   subnets = each.value.public_subnets_per_vpc > 0
     ? module.vpc[each.key].public_subnets
     : module.vpc[each.key].private_subnets
 
-  security_groups    = [module.lb_security_group[each.key].security_group_id]
-  instances          = module.ec2_instances[each.key].instance_ids
+  security_groups     = [module.lb_security_group[each.key].security_group_id]
+  instances           = module.ec2_instances[each.key].instance_ids
   number_of_instances = length(module.ec2_instances[each.key].instance_ids)
 
   listener = [
     {
-      instance_port     = 80
-      instance_protocol = "http"
-      lb_port           = 80
-      lb_protocol       = "http"
+      instance_port      = 80
+      instance_protocol  = "http"
+      lb_port            = 80
+      lb_protocol        = "http"
     },
     {
-      instance_port     = 80
-      instance_protocol = "http"
-      lb_port           = 443
-      lb_protocol       = "https"
-      ssl_certificate_id = var.ssl_certificate_id  
+      instance_port      = 80
+      instance_protocol  = "http"
+      lb_port            = 443
+      lb_protocol        = "https"
+      ssl_certificate_id = var.ssl_certificate_id
     }
   ]
 
