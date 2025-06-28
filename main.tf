@@ -43,7 +43,7 @@ module "vpc" {
 
   enable_nat_gateway              = each.value.private_subnets_per_vpc > 0 ? true : false
   enable_vpn_gateway              = false
-  public_subnet_map_public_ip_on_launch = each.value.public_subnets_per_vpc > 0 ? true : false
+ ##### public_subnet_map_public_ip_on_launch = each.value.public_subnets_per_vpc > 0 ? true : false
 }
 
 
