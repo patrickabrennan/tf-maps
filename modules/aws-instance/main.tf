@@ -36,16 +36,16 @@ resource "aws_instance" "app" {
   echo "Installing Pat's Google Maps Application"
 
   # Update and install Docker properly
-  yum update -y
-  amazon-linux-extras install docker -y
-  systemctl start docker
-  systemctl enable docker
+  sudo yum update -y
+  sudo amazon-linux-extras install docker -y
+  sudo systemctl start docker
+  sudo systemctl enable docker
 
   # Add ec2-user to docker group
-  usermod -aG docker ec2-user
+  sudo usermod -aG docker ec2-user
 
   # Allow docker socket access (optional, may be insecure)
-  chmod 666 /var/run/docker.sock
+  sudo chmod 666 /var/run/docker.sock
 
   # Run your Docker container
   docker run --rm -d -p 80:80 -p 443:443 --name myweb patrickabrennan/myweb
