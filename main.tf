@@ -191,31 +191,27 @@ locals {
 
 #NEW EC2 INSSTANCE MNODE 6/26/2025
 module "ec2_instances" {
-  source     = "./modules/aws-instance"
-  depends_on = [module.vpc]
+  source = "./modules/aws-instance"
 
   for_each = {
     for p in local.flattened_projects : p.key => p
     if p.private_subnets_per_vpc > 0 || p.public_subnets_per_vpc > 0
   }
 
-  instance_count = each.value.instances_per_subnet * (
+  instance_count             = each.value.instances_per_subnet * (
     each.value.private_subnets_per_vpc > 0
       ? length(module.vpc[each.key].private_subnets)
       : length(module.vpc[each.key].public_subnets)
   )
-
-  subnet_ids = (
-    each.value.private_subnets_per_vpc > 0
-      ? module.vpc[each.key].private_subnets
-      : module.vpc[each.key].public_subnets
-  )
-
-  instance_type      = each.value.instance_type
-  security_group_ids = [module.app_security_group[each.key].security_group_id]
-  project_name       = each.key
-  environment        = each.value.environment
-  ssh_key_name       = var.ssh_key_name
+  subnet_ids                = each.value.private_subnets_per_vpc > 0
+                              ? module.vpc[each.key].private_subnets
+                              : module.vpc[each.key].public_subnets
+  associate_public_ip_address = each.value.public_subnets_per_vpc > 0
+  instance_type             = each.value.instance_type
+  security_group_ids        = [module.app_security_group[each.key].security_group_id]
+  project_name              = each.key
+  environment               = each.value.environment
+  ssh_key_name              = var.ssh_key_name
 }
 
 
