@@ -16,7 +16,7 @@ variable "aws_region" {
 }
 
 #ADDED 6-27-25
-variable "ssl_cert_arn" {
+variable "ssl_certificate_id" {
   description = "ARN of the SSL certificate"
   type        = string
 }
