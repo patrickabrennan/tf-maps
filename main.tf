@@ -163,7 +163,7 @@ module "elb_http" {
     #},
     {
       instance_port     = 80
-      instance_protocol = "https"
+      instance_protocol = "http"
       lb_port           = 443
       lb_protocol       = "https"
       ssl_certificate_id = var.ssl_certificate_id  
