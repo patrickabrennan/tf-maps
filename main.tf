@@ -11,7 +11,7 @@ data "aws_availability_zones" "available" {
   }
 }
 
-##ADDED 6/25/2025
+#ADDED 6/25/2025
 locals {
   flattened_projects = [
     for project_key, project in var.project : {
@@ -41,31 +41,11 @@ module "vpc" {
   private_subnets = slice(var.private_subnet_cidr_blocks, 0, each.value.private_subnets_per_vpc)
   public_subnets  = each.value.public_subnets_per_vpc > 0 ? slice(var.public_subnet_cidr_blocks, 0, each.value.public_subnets_per_vpc) : []
 
-  enable_nat_gateway = each.value.public_subnets_per_vpc > 0 ? true : false
-  enable_vpn_gateway = false
+  enable_internet_gateway = each.value.public_subnets_per_vpc > 0
+  enable_nat_gateway      = each.value.private_subnets_per_vpc > 0 && each.value.public_subnets_per_vpc > 0
+  enable_vpn_gateway      = false
   map_public_ip_on_launch = false
 }
-
-#NEW VPC Module ADDED 6/25/25
-#module "vpc" {
-#  source  = "terraform-aws-modules/vpc/aws"
-#  version = "3.14.2"
-
-#  #for_each = { for p in local.flattened_projects : p.key => p }
-##ADDED 6/27/2025
-#  for_each = {
-#    for p in local.flattened_projects : p.key => p
-#    if p.private_subnets_per_vpc > 0 || p.public_subnets_per_vpc > 0
-#  }
-
-#  cidr = var.vpc_cidr_block
-#  azs  = data.aws_availability_zones.available.names
-#  private_subnets = slice(var.private_subnet_cidr_blocks, 0, each.value.private_subnets_per_vpc)
-#  public_subnets  = slice(var.public_subnet_cidr_blocks, 0, each.value.public_subnets_per_vpc)
-#  enable_nat_gateway      = true
-#  enable_vpn_gateway      = false
-#  map_public_ip_on_launch = false
-#}
 
 #NEW APP SECURITY GROUP 6/27/2025
 module "app_security_group" {
@@ -110,18 +90,10 @@ module "lb_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
   version = "4.9.0"
   
-  #ADDED 6/27/2025
-  #for_each = var.project
-# For lb_security_group
   for_each = {
     for p in local.flattened_projects : p.key => p
     if p.private_subnets_per_vpc > 0 || p.public_subnets_per_vpc > 0
   }
-
-#for_each = {
-#    for k, v in var.project : k => v
-#    if try(module.vpc[k].vpc_id, null) != null
-#  }
 
   name = "load-balancer-sg-${each.key}-${each.value.environment}"
   description = "Security group for load balancer with HTTP ports open within VPC"
@@ -165,15 +137,15 @@ module "elb_http" {
 
   for_each = {
     for p in local.flattened_projects : p.key => p
-    if p.public_subnets_per_vpc > 0 || p.private_subnets_per_vpc > 0
+    if p.public_subnets_per_vpc > 0
   }
 
   name              = local.elb_names[each.key]
   internal          = false
   security_groups   = [module.lb_security_group[each.key].security_group_id]
-  subnets           = each.value.public_subnets_per_vpc > 0 ? module.vpc[each.key].public_subnets : module.vpc[each.key].private_subnets
+  subnets           = module.vpc[each.key].public_subnets
   number_of_instances = length(module.ec2_instances[each.key].instance_ids)
-  instances           = module.ec2_instances[each.key].instance_ids
+  instances            = module.ec2_instances[each.key].instance_ids
 
   listener = [{
     instance_port      = "80"
@@ -184,7 +156,7 @@ module "elb_http" {
   }]
 
   health_check = {
-    target              = "HTTP:80/index.html"
+    target              = "HTTP:80/"
     interval            = 10
     healthy_threshold   = 3
     unhealthy_threshold = 10
@@ -194,9 +166,7 @@ module "elb_http" {
   depends_on = [module.ec2_instances]
 }
 
-
-
-#ADDED 6/27/2025
+#ROUTE53 ADDED 6/27/2025
 resource "aws_route53_record" "maps" {
   count   = contains(keys(module.elb_http), "backend") ? 1 : 0
   zone_id = "Z08017432VFWFXO6IWHIK"
@@ -210,29 +180,31 @@ resource "aws_route53_record" "maps" {
   }
 }
 
-
-
-
-
-#NEW EC2 INSSTANCE MNODE 6/26/2025
+#NEW EC2 INSTANCE NODE 6/27/2025
 module "ec2_instances" {
   source     = "./modules/aws-instance"
   depends_on = [module.vpc]
 
-#Added 6/27/2025
-#  for_each = { for p in local.flattened_projects : p.key => p }
   for_each = {
     for p in local.flattened_projects : p.key => p
-    if p.private_subnets_per_vpc > 0
+    if p.private_subnets_per_vpc > 0 || p.public_subnets_per_vpc > 0
   }
 
-  instance_count     = each.value.instances_per_subnet * length(module.vpc[each.key].private_subnets)
+  instance_count = each.value.instances_per_subnet * (
+    each.value.private_subnets_per_vpc > 0
+    ? length(module.vpc[each.key].private_subnets)
+    : length(module.vpc[each.key].public_subnets)
+  )
+
+  subnet_ids = each.value.private_subnets_per_vpc > 0
+    ? module.vpc[each.key].private_subnets
+    : module.vpc[each.key].public_subnets
+
   instance_type      = each.value.instance_type
-  subnet_ids         = module.vpc[each.key].private_subnets[*]
   security_group_ids = [module.app_security_group[each.key].security_group_id]
-  project_name = each.key
-  environment  = each.value.environment
-  ssh_key_name = var.ssh_key_name   # Add this line
+  project_name       = each.key
+  environment        = each.value.environment
+  ssh_key_name       = var.ssh_key_name
 }
 
 #ADDED 6/26/2025
