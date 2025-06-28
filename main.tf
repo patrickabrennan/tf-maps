@@ -207,6 +207,9 @@ module "ec2_instances" {
   ssh_key_name       = var.ssh_key_name
 }
 
+
+
+
 #ADDED 6/26/2025
 resource "aws_key_pair" "deployer" {
   key_name   = var.ssh_key_name
