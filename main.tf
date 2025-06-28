@@ -39,16 +39,11 @@ module "vpc" {
   azs  = data.aws_availability_zones.available.names
 
   private_subnets = slice(var.private_subnet_cidr_blocks, 0, each.value.private_subnets_per_vpc)
+  public_subnets  = each.value.public_subnets_per_vpc > 0 ? slice(var.public_subnet_cidr_blocks, 0, each.value.public_subnets_per_vpc) : []
 
-  public_subnets = (
-    each.value.public_subnets_per_vpc > 0
-      ? slice(var.public_subnet_cidr_blocks, 0, each.value.public_subnets_per_vpc)
-      : []
-   )
-
-  enable_nat_gateway     = each.value.private_subnets_per_vpc > 0 ? true : false
-  enable_vpn_gateway     = false
-  map_public_ip_on_launch = each.value.public_subnets_per_vpc > 0 ? true : false
+  enable_nat_gateway              = each.value.private_subnets_per_vpc > 0 ? true : false
+  enable_vpn_gateway              = false
+  public_subnet_map_public_ip_on_launch = each.value.public_subnets_per_vpc > 0 ? true : false
 }
 
 
@@ -64,7 +59,7 @@ module "app_security_group" {
   }
 
   name        = "web-server-sg-${each.key}-${each.value.environment}"
-  description = "Security group for web-servers with HTTP and SSH ports open"
+  description = "Security group for web servers - SSH, HTTP, HTTPS"
   vpc_id      = module.vpc[each.key].vpc_id
 
   ingress_with_cidr_blocks = [
@@ -72,22 +67,22 @@ module "app_security_group" {
       from_port   = 22
       to_port     = 22
       protocol    = "tcp"
-      description = "Allow SSH"
-      cidr_blocks = "0.0.0.0/0"
+      cidr_blocks = ["0.0.0.0/0"]
+      description = "SSH"
     },
     {
       from_port   = 80
       to_port     = 80
       protocol    = "tcp"
-      description = "Allow HTTP"
-      cidr_blocks = "0.0.0.0/0"
+      cidr_blocks = ["0.0.0.0/0"]
+      description = "HTTP"
     },
     {
       from_port   = 443
       to_port     = 443
       protocol    = "tcp"
-      description = "Allow HTTPS"
-      cidr_blocks = "0.0.0.0/0"
+      cidr_blocks = ["0.0.0.0/0"]
+      description = "HTTPS"
     }
   ]
 }
@@ -187,12 +182,6 @@ locals {
   }
 }
 
-
-
-
-
-
-
 #NEW EC2 INSSTANCE MNODE 6/26/2025
 module "ec2_instances" {
   source = "./modules/aws-instance"
@@ -202,44 +191,22 @@ module "ec2_instances" {
     if p.private_subnets_per_vpc > 0 || p.public_subnets_per_vpc > 0
   }
 
-  instance_count             = each.value.instances_per_subnet * (
+  instance_count = each.value.instances_per_subnet * (
     each.value.private_subnets_per_vpc > 0
       ? length(module.vpc[each.key].private_subnets)
       : length(module.vpc[each.key].public_subnets)
   )
-  subnet_ids = (
-    each.value.private_subnets_per_vpc > 0
-      ? module.vpc[each.key].private_subnets
-      : module.vpc[each.key].public_subnets
-  )
+  subnet_ids = each.value.private_subnets_per_vpc > 0 ? module.vpc[each.key].private_subnets : module.vpc[each.key].public_subnets
+
   associate_public_ip_address = each.value.public_subnets_per_vpc > 0
-  instance_type             = each.value.instance_type
-  security_group_ids        = [module.app_security_group[each.key].security_group_id]
-  project_name              = each.key
-  environment               = each.value.environment
-  ssh_key_name              = var.ssh_key_name
+
+  instance_type      = each.value.instance_type
+  security_group_ids = [module.app_security_group[each.key].security_group_id]
+  project_name       = each.key
+  environment        = each.value.environment
+  ssh_key_name       = var.ssh_key_name
 }
 
-
-#module "ec2_instances" {
-#  source     = "./modules/aws-instance"
-#  depends_on = [module.vpc]
-
-#Added 6/27/2025
-#  for_each = { for p in local.flattened_projects : p.key => p }
-#  for_each = {
-#    for p in local.flattened_projects : p.key => p
-#    if p.private_subnets_per_vpc > 0
-#  }
-
-#  instance_count     = each.value.instances_per_subnet * length(module.vpc[each.key].private_subnets)
-#  instance_type      = each.value.instance_type
-#  subnet_ids         = module.vpc[each.key].private_subnets[*]
-#  security_group_ids = [module.app_security_group[each.key].security_group_id]
-#  project_name = each.key
-#  environment  = each.value.environment
-#  ssh_key_name = var.ssh_key_name   # Add this line
-#}
 
 #ADDED 6/26/2025
 resource "aws_key_pair" "deployer" {
