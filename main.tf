@@ -28,8 +28,8 @@ locals {
 #NEW VPC MODUKE ADDED 6/27/2025
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "3.14.2"
-  #version = "4.0.0"
+  #version = "3.14.2"
+  version = "4.0.0"
   for_each = {
     for p in local.flattened_projects : p.key => p
     if p.private_subnets_per_vpc > 0 || p.public_subnets_per_vpc > 0
@@ -43,7 +43,7 @@ module "vpc" {
 
   enable_nat_gateway              = each.value.private_subnets_per_vpc > 0 ? true : false
   enable_vpn_gateway              = false
- ##### public_subnet_map_public_ip_on_launch = each.value.public_subnets_per_vpc > 0 ? true : false
+  public_subnet_map_public_ip_on_launch = each.value.public_subnets_per_vpc > 0 ? true : false
 }
 
 
@@ -67,24 +67,24 @@ module "app_security_group" {
       from_port   = 22
       to_port     = 22
       protocol    = "tcp"
-      #cidr_blocks = ["0.0.0.0/0"]
-      cidr_blocks = "0.0.0.0/0"
+      cidr_blocks = ["0.0.0.0/0"]
+      #cidr_blocks = "0.0.0.0/0"
       description = "SSH"
     },
     {
       from_port   = 80
       to_port     = 80
       protocol    = "tcp"
-      #cidr_blocks = ["0.0.0.0/0"]
-      cidr_blocks = "0.0.0.0/0"
+      cidr_blocks = ["0.0.0.0/0"]
+      #cidr_blocks = "0.0.0.0/0"
       description = "HTTP"
     },
     {
       from_port   = 443
       to_port     = 443
       protocol    = "tcp"
-      #cidr_blocks = ["0.0.0.0/0"]
-      cidr_blocks = "0.0.0.0/0"
+      cidr_blocks = ["0.0.0.0/0"]
+      #cidr_blocks = "0.0.0.0/0"
       description = "HTTPS"
     }
   ]
