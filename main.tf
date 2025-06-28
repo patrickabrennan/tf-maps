@@ -197,17 +197,20 @@ module "elb_http" {
 
 
 #ADDED 6/27/2025
-resource "aws_route53_record" "maps" {
+resource "aws_route53_record" "project_records" {
+  for_each = module.elb_http
+
   zone_id = "Z08017432VFWFXO6IWHIK"
-  name    = "maps.demo.pabrennan.com"
+  name    = local.elb_names[each.key]
   type    = "A"
 
   alias {
-    name                   = module.elb_http["maps"].elb_dns_name
-    zone_id                = module.elb_http["maps"].elb_zone_id
+    name                   = each.value.elb_dns_name
+    zone_id                = each.value.elb_zone_id
     evaluate_target_health = true
   }
 }
+
 
 
 
