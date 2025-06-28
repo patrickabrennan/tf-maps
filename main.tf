@@ -68,7 +68,6 @@ module "app_security_group" {
       to_port     = 22
       protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
-      #cidr_blocks = "0.0.0.0/0"
       description = "SSH"
     },
     {
@@ -76,7 +75,6 @@ module "app_security_group" {
       to_port     = 80
       protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
-      #cidr_blocks = "0.0.0.0/0"
       description = "HTTP"
     },
     {
@@ -84,7 +82,6 @@ module "app_security_group" {
       to_port     = 443
       protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
-      #cidr_blocks = "0.0.0.0/0"
       description = "HTTPS"
     }
   ]
