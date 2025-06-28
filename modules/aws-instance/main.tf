@@ -11,14 +11,23 @@
 #  default = true
 #}
 
-resource "aws_instance" "this" {
-  count = var.instance_count
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
 
-  ami                         = data.aws_ami.amazon_linux.id
-  instance_type               = var.instance_type
-  subnet_id                   = element(var.subnet_ids, count.index % length(var.subnet_ids))
-  vpc_security_group_ids      = var.security_group_ids
-  key_name                    = var.ssh_key_name
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
+resource "aws_instance" "this" {
+  count                     = var.instance_count
+  ami                       = data.aws_ami.amazon_linux.id
+  instance_type             = var.instance_type
+  subnet_id                 = element(var.subnet_ids, count.index % length(var.subnet_ids))
+  vpc_security_group_ids    = var.security_group_ids
+  key_name                  = var.ssh_key_name
   associate_public_ip_address = var.associate_public_ip_address
 
   user_data = <<-EOF
@@ -37,15 +46,7 @@ resource "aws_instance" "this" {
   }
 }
 
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
 
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
-  }
-}
 
 
 #variable "ssh_key_name" {
