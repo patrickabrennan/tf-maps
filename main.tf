@@ -192,8 +192,8 @@ module "ec2_instances" {
 
   instance_count = each.value.instances_per_subnet * (
     each.value.private_subnets_per_vpc > 0
-    ? length(module.vpc[each.key].private_subnets)
-    : length(module.vpc[each.key].public_subnets)
+      ? length(module.vpc[each.key].private_subnets)
+      : length(module.vpc[each.key].public_subnets)
   )
 
   subnet_ids = each.value.private_subnets_per_vpc > 0
@@ -206,6 +206,7 @@ module "ec2_instances" {
   environment        = each.value.environment
   ssh_key_name       = var.ssh_key_name
 }
+
 
 
 
