@@ -27,3 +27,12 @@ variable "environment" {
   description = "Name of the environment"
   type        = string
 }
+
+variable "ssh_key_name" {
+  type        = string
+}
+
+variable "associate_public_ip_address" {
+  type    = bool
+  default = true
+}
