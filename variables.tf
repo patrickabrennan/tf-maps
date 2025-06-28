@@ -15,10 +15,9 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-#ADDED 6-25-25
-# Optional externalized cert ARN
-variable "acm_certificate_arn" {
-  description = "ACM certificate ARN for HTTPS"
+#ADDED 6-27-25
+variable "ssl_cert_arn" {
+  description = "ARN of the SSL certificate"
   type        = string
 }
 
