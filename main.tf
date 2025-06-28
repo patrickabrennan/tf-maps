@@ -139,24 +139,24 @@ resource "random_string" "lb_id" {
 }
 
 #NEW ELB with name:
-locals {
-  elb_names = {
-    for k, v in var.project : k =>
-    k == "maps"
-    ? "maps.demo.pabrennan.com"
-    : trimsuffix(
-        substr(
-          join(
-            "",
-            regexall("[a-zA-Z0-9-]", join("-", ["lb", random_string.lb_id.result, k, v.environment]))
-          ),
-          0,
-          32
-        ),
-        "-"
-      )
-  }
-}
+#locals {
+#  elb_names = {
+#    for k, v in var.project : k =>
+#    k == "maps"
+#    ? "maps.demo.pabrennan.com"
+#    : trimsuffix(
+#        substr(
+#          join(
+#            "",
+#            regexall("[a-zA-Z0-9-]", join("-", ["lb", random_string.lb_id.result, k, v.environment]))
+#          ),
+#          0,
+#          32
+#        ),
+#        "-"
+#      )
+#  }
+#}
 
 #ADDED NEW ELB MODULE
 module "elb_http" {
@@ -197,19 +197,32 @@ module "elb_http" {
 
 
 #ADDED 6/27/2025
-resource "aws_route53_record" "project_records" {
-  for_each = module.elb_http
+locals {
+  elb_names = {
+    for k, v in var.project : k =>
+    k == "maps"
+    ? "maps-demo-pabrennan-com" # ELB name can't have dots
+    : trimsuffix(
+        substr(
+          join(
+            "",
+            regexall("[a-zA-Z0-9-]", join("-", ["lb", random_string.lb_id.result, k, v.environment]))
+          ),
+          0,
+          32
+        ),
+        "-"
+      )
+  }
 
-  zone_id = "Z08017432VFWFXO6IWHIK"
-  name    = local.elb_names[each.key]
-  type    = "A"
-
-  alias {
-    name                   = each.value.elb_dns_name
-    zone_id                = each.value.elb_zone_id
-    evaluate_target_health = true
+  route53_names = {
+    for k, v in var.project : k =>
+    k == "maps"
+    ? "maps.demo.pabrennan.com" # Valid for Route53
+    : local.elb_names[k]
   }
 }
+
 
 
 
