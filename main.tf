@@ -163,18 +163,15 @@ module "elb_http" {
   source  = "terraform-aws-modules/elb/aws"
   version = "3.0.1"
 
-#ADDED 7/27/2025
-  #Chaged for each code 6-25-25
-  #for_each = { for p in local.flattened_projects : p.key => p }
   for_each = {
     for p in local.flattened_projects : p.key => p
-    if p.public_subnets_per_vpc > 0 && p.private_subnets_per_vpc > 0
+    if p.public_subnets_per_vpc > 0 || p.private_subnets_per_vpc > 0
   }
 
-  name     = local.elb_names[each.key]
-  internal = false
-  security_groups = [module.lb_security_group[each.key].security_group_id]
-  subnets         = module.vpc[each.key].public_subnets
+  name              = local.elb_names[each.key]
+  internal          = false
+  security_groups   = [module.lb_security_group[each.key].security_group_id]
+  subnets           = each.value.public_subnets_per_vpc > 0 ? module.vpc[each.key].public_subnets : module.vpc[each.key].private_subnets
   number_of_instances = length(module.ec2_instances[each.key].instance_ids)
   instances           = module.ec2_instances[each.key].instance_ids
 
@@ -183,25 +180,25 @@ module "elb_http" {
     instance_protocol  = "HTTP"
     lb_port            = "443"
     lb_protocol        = "HTTPS"
-    ssl_certificate_id = "arn:aws:acm:us-east-2:285942769742:certificate/2b1fade2-4584-459b-9098-76e940a7da18"
+    ssl_certificate_id = var.ssl_cert_arn
   }]
 
   health_check = {
-    #Commented out port 80
     target              = "HTTP:80/index.html"
-    #Added port 443
-    #target              = "HTTP:443/index.html"
     interval            = 10
     healthy_threshold   = 3
     unhealthy_threshold = 10
     timeout             = 5
   }
+
   depends_on = [module.ec2_instances]
 }
 
+
+
 #ADDED 6/27/2025
 resource "aws_route53_record" "maps" {
-  count   = contains(keys(module.elb_http), "backend") ? 1 : 0
+  count   = try(module.elb_http["backend"].elb_dns_name != "", false) ? 1 : 0
   zone_id = "Z08017432VFWFXO6IWHIK"
   name    = "maps.demo.pabrennan.com"
   type    = "A"
@@ -212,6 +209,9 @@ resource "aws_route53_record" "maps" {
     evaluate_target_health = true
   }
 }
+
+
+
 
 #NEW EC2 INSSTANCE MNODE 6/26/2025
 module "ec2_instances" {
