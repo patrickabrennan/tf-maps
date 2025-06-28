@@ -180,7 +180,7 @@ module "elb_http" {
     instance_protocol  = "HTTP"
     lb_port            = "443"
     lb_protocol        = "HTTPS"
-    ssl_certificate_id = var.ssl_cert_arn
+    ssl_certificate_id = var.ssl_certificate_id
   }]
 
   health_check = {
