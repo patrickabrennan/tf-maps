@@ -46,10 +46,9 @@ module "vpc" {
 
   enable_nat_gateway     = each.value.private_subnets_per_vpc > 0 ? true : false
   enable_vpn_gateway     = false
-
-  # Crucial: assign public IPs automatically in public subnets so instances can reach internet
   map_public_ip_on_launch = each.value.public_subnets_per_vpc > 0 ? true : false
 }
+
 
 
 #NEW APP SECURITY GROUP 6/27/2025
