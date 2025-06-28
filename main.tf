@@ -174,7 +174,7 @@ module "elb_http" {
     healthy_threshold   = 3
     unhealthy_threshold = 2
     timeout             = 5
-    target              = "HTTP:80/"
+    target              = "HTTP:80/index.html"
     interval            = 30
   }
 
