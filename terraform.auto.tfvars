@@ -5,8 +5,8 @@ ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDZUw1yvE8A15vPk48W637EjM
 vpc_cidr_block = "10.0.0.0/16"
 
 project = {
-  frontend = {
-    environment             = "dev"
+  maps = {
+    environment             = "prod"
     private_subnets_per_vpc = 0
     public_subnets_per_vpc  = 0
     instances_per_subnet    = 3
