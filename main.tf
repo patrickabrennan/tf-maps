@@ -40,9 +40,11 @@ module "vpc" {
 
   private_subnets = slice(var.private_subnet_cidr_blocks, 0, each.value.private_subnets_per_vpc)
 
-  public_subnets = each.value.public_subnets_per_vpc > 0
-    ? slice(var.public_subnet_cidr_blocks, 0, each.value.public_subnets_per_vpc)
-    : []
+  public_subnets = (
+    each.value.public_subnets_per_vpc > 0
+      ? slice(var.public_subnet_cidr_blocks, 0, each.value.public_subnets_per_vpc)
+      : []
+   )
 
   enable_nat_gateway     = each.value.private_subnets_per_vpc > 0 ? true : false
   enable_vpn_gateway     = false
