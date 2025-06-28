@@ -32,21 +32,43 @@ resource "aws_instance" "app" {
   #ADDED 6/26/2025
   key_name = var.ssh_key_name
   user_data = <<-EOF
-    #!/bin/bash
-    echo "Installing Pat's Google Maps Application"
-    sudo bash -c 'yum update -y'
-    sudo bash -c 'yum install docker -y'
-    sudo bash -c 'systemctl start docker' 
-    sudo bash -c 'systemctl enable docker'
-    sudo bash -c 'chmod 666 /var/run/docker.sock'
-    docker run --rm -d -p 80:80 -p 443:443 --name myweb patrickabrennan/myweb
-    echo "Completed Installing Pat's Google Maps Application"
+  #!/bin/bash
+  echo "Installing Pat's Google Maps Application"
+
+  # Update and install Docker properly
+  yum update -y
+  amazon-linux-extras install docker -y
+  systemctl start docker
+  systemctl enable docker
+
+  # Add ec2-user to docker group
+  usermod -aG docker ec2-user
+
+  # Allow docker socket access (optional, may be insecure)
+  chmod 666 /var/run/docker.sock
+
+  # Run your Docker container
+  docker run --rm -d -p 80:80 -p 443:443 --name myweb patrickabrennan/myweb
+
+  echo "Completed Installing Pat's Google Maps Application"
+  EOF
+
+  #user_data = <<-EOF
+  #  #!/bin/bash
+  #  echo "Installing Pat's Google Maps Application"
+  #  sudo bash -c 'yum update -y'
+  #  sudo bash -c 'yum install docker -y'
+  #  sudo bash -c 'systemctl start docker' 
+  #  sudo bash -c 'systemctl enable docker'
+  #  sudo bash -c 'chmod 666 /var/run/docker.sock'
+  #  docker run --rm -d -p 80:80 -p 443:443 --name myweb patrickabrennan/myweb
+  #  echo "Completed Installing Pat's Google Maps Application"
     #sudo yum update -y
     #sudo yum install httpd -y
     #sudo systemctl enable httpd
     #sudo systemctl start httpd
     #echo "<html><body><div>Hello, world!</div></body></html>" > /var/www/html/index.html
-  EOF
+  #EOF
 
   tags = {
     Terraform   = "true"
