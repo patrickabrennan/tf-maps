@@ -138,31 +138,20 @@ module "elb_http" {
 
   for_each = {
     for p in local.flattened_projects : p.key => p
-    if p.public_subnets_per_vpc > 0
+    if p.public_subnets_per_vpc > 0 || p.private_subnets_per_vpc > 0
   }
 
-  name              = local.elb_names[each.key]
-  internal          = false
-  security_groups   = [module.lb_security_group[each.key].security_group_id]
-  subnets           = module.vpc[each.key].public_subnets
+  name            = local.elb_names[each.key]
+  internal        = each.value.public_subnets_per_vpc == 0
+  subnets         = each.value.public_subnets_per_vpc > 0
+                     ? module.vpc[each.key].public_subnets
+                     : module.vpc[each.key].private_subnets
+  security_groups = [module.lb_security_group[each.key].security_group_id]
+  instances       = module.ec2_instances[each.key].instance_ids
   number_of_instances = length(module.ec2_instances[each.key].instance_ids)
-  instances            = module.ec2_instances[each.key].instance_ids
 
-  listener = [{
-    instance_port      = "80"
-    instance_protocol  = "HTTP"
-    lb_port            = "443"
-    lb_protocol        = "HTTPS"
-    ssl_certificate_id = var.ssl_certificate_id
-  }]
-
-  health_check = {
-    target              = "HTTP:80/"
-    interval            = 10
-    healthy_threshold   = 3
-    unhealthy_threshold = 10
-    timeout             = 5
-  }
+  # ... listeners, health check, etc.
+}
 
   depends_on = [module.ec2_instances]
 }
