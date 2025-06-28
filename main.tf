@@ -154,13 +154,12 @@ module "elb_http" {
 
   # Listeners - listen on HTTP (80) and HTTPS (443)
   listener = [
-    #{
-    #  instance_port     = 80
-    #  instance_protocol = "http"
-    #  lb_port           = 80
-    #  lb_protocol       = "http"
-    #  ssl_certificate_id = var.ssl_certificate_id 
-    #},
+    {
+      instance_port     = 80
+      instance_protocol = "http"
+      lb_port           = 80
+      lb_protocol       = "http"
+    },
     {
       instance_port     = 80
       instance_protocol = "http"
